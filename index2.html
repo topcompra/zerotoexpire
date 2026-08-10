@@ -10,28 +10,6 @@
         <title>ZeroToExpire | Private Market Intelligence</title>
         <link rel="icon" type="image/svg+xml" href="media/ai_chip.svg" />
 
-        <script>
-            (() => {
-                document.documentElement.classList.add("js");
-
-                try {
-                    const reduced = window.matchMedia(
-                        "(prefers-reduced-motion: reduce)",
-                    ).matches;
-                    const forceIntro =
-                        new URLSearchParams(window.location.search).get("intro") ===
-                        "1";
-                    const seen = localStorage.getItem("zte_intro_seen_v1");
-
-                    if (!reduced && (forceIntro || !seen)) {
-                        document.documentElement.classList.add("zte-first-visit");
-                    }
-                } catch (_) {
-                    // If storage is unavailable, render the page normally.
-                }
-            })();
-        </script>
-
         <style>
             :root {
                 --bg: #110f0b;
@@ -95,201 +73,23 @@
                 position: fixed;
                 inset: 0;
                 pointer-events: none;
-                z-index: 0;
-                background:
-                    radial-gradient(
-                        circle at 50% 20%,
-                        rgba(242, 214, 148, 0.045),
-                        transparent 29rem
+                opacity: 0.22;
+                background-image:
+                    linear-gradient(
+                        rgba(232, 218, 187, 0.018) 1px,
+                        transparent 1px
                     ),
-                    radial-gradient(
-                        ellipse at 18% 42%,
-                        rgba(224, 187, 104, 0.018),
-                        transparent 28rem
-                    ),
-                    radial-gradient(
-                        ellipse at 82% 38%,
-                        rgba(232, 218, 187, 0.015),
-                        transparent 30rem
+                    linear-gradient(
+                        90deg,
+                        rgba(232, 218, 187, 0.014) 1px,
+                        transparent 1px
                     );
-                mask-image: linear-gradient(to bottom, black 0%, black 66%, transparent 96%);
-            }
-
-            .ambient-data {
-                position: fixed;
-                inset: 74px 0 auto;
-                width: 100%;
-                height: min(92vh, 1040px);
-                pointer-events: none;
-                z-index: 0;
-                overflow: hidden;
-                opacity: 0.62;
-                mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 84%, transparent 100%);
-            }
-
-            .ambient-data svg {
-                width: 100%;
-                height: 100%;
-                display: block;
-            }
-
-            .ambient-trace {
-                fill: none;
-                stroke: rgba(232, 218, 187, 0.055);
-                stroke-width: 1;
-                vector-effect: non-scaling-stroke;
-            }
-
-            .ambient-trace--soft {
-                stroke: rgba(224, 187, 104, 0.032);
-            }
-
-            .ambient-point {
-                fill: rgba(242, 214, 148, 0.18);
-            }
-
-            .boot-pulse {
-                position: fixed;
-                top: 74px;
-                left: 0;
-                width: 2px;
-                height: min(62vh, 640px);
-                pointer-events: none;
-                z-index: 0;
-                opacity: 0;
-                background: linear-gradient(
-                    to bottom,
-                    transparent,
-                    rgba(242, 214, 148, 0.16) 35%,
-                    rgba(242, 214, 148, 0.08) 62%,
-                    transparent
-                );
-            }
-
-            .eyebrow::after {
-                content: "";
-                display: inline-block;
-                width: 1px;
-                height: 1.05em;
-                margin-left: 0.18em;
-                vertical-align: -0.12em;
-                background: currentColor;
-                opacity: 0.72;
-                animation: caret-blink 900ms steps(1, end) infinite;
-            }
-
-            @keyframes caret-blink {
-                0%,
-                46% {
-                    opacity: 0.72;
-                }
-                47%,
-                100% {
-                    opacity: 0;
-                }
-            }
-
-            html.zte-first-visit .hero h1,
-            html.zte-first-visit .hero-copy,
-            html.zte-first-visit .ai-line,
-            html.zte-first-visit .hero-actions,
-            html.zte-first-visit .demo-reveal {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            html.zte-first-visit.intro-ready .hero h1,
-            html.zte-first-visit.intro-ready .hero-copy,
-            html.zte-first-visit.intro-ready .ai-line,
-            html.zte-first-visit.intro-ready .hero-actions,
-            html.zte-first-visit.intro-ready .demo-reveal {
-                opacity: 1;
-                transform: translateY(0);
-                transition:
-                    opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
-                    transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-
-            html.zte-first-visit.intro-ready .hero h1 {
-                transition-delay: 40ms;
-            }
-
-            html.zte-first-visit.intro-ready .hero-copy {
-                transition-delay: 120ms;
-            }
-
-            html.zte-first-visit.intro-ready .ai-line {
-                transition-delay: 185ms;
-            }
-
-            html.zte-first-visit.intro-ready .hero-actions {
-                transition-delay: 250ms;
-            }
-
-            html.zte-first-visit.intro-ready .demo-reveal {
-                transition-delay: 330ms;
-            }
-
-            html.zte-first-visit .ambient-trace {
-                stroke-dasharray: 1800;
-                stroke-dashoffset: 1800;
-            }
-
-            html.zte-first-visit.intro-ready .ambient-trace {
-                animation: trace-arrive 1600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            }
-
-            html.zte-first-visit.intro-ready .ambient-trace--soft {
-                animation-delay: 120ms;
-            }
-
-            html.zte-first-visit.intro-ready .boot-pulse {
-                animation: boot-scan 1450ms cubic-bezier(0.4, 0, 0.2, 1) 180ms 1 both;
-            }
-
-            @keyframes trace-arrive {
-                to {
-                    stroke-dashoffset: 0;
-                }
-            }
-
-            @keyframes boot-scan {
-                0% {
-                    transform: translateX(12vw);
-                    opacity: 0;
-                }
-                12% {
-                    opacity: 0.7;
-                }
-                82% {
-                    opacity: 0.34;
-                }
-                100% {
-                    transform: translateX(78vw);
-                    opacity: 0;
-                }
-            }
-
-            .js .reveal {
-                opacity: 0;
-                transform: translateY(16px);
-                transition:
-                    opacity 640ms cubic-bezier(0.22, 1, 0.36, 1),
-                    transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
-            }
-
-            .js .reveal.is-visible {
-                opacity: 1;
-                transform: translateY(0);
+                background-size: 34px 34px;
+                mask-image: linear-gradient(to bottom, black, transparent 80%);
             }
 
             a {
                 color: inherit;
-            }
-
-            #top,
-            #research {
-                scroll-margin-top: 90px;
             }
 
             .shell {
@@ -299,32 +99,13 @@
                 z-index: 1;
             }
 
-            .topbar-wrap {
-                position: sticky;
-                top: 0;
-                z-index: 50;
-                background: transparent;
-                border-bottom: 1px solid transparent;
-                transition:
-                    background-color 220ms ease,
-                    border-color 220ms ease,
-                    box-shadow 220ms ease;
-            }
-
-            .topbar-wrap.is-scrolled {
-                background: rgba(10, 9, 7, 0.82);
-                backdrop-filter: blur(16px) saturate(140%);
-                -webkit-backdrop-filter: blur(16px) saturate(140%);
-                border-bottom-color: rgba(232, 218, 187, 0.09);
-                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
-            }
-
             .topbar {
                 min-height: 74px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 gap: 24px;
+                border-bottom: 1px solid rgba(232, 218, 187, 0.09);
             }
 
             .brand {
@@ -481,31 +262,17 @@
             }
 
             .button-primary {
-                color: var(--gold);
-                background: linear-gradient(
-                    160deg,
-                    rgba(242, 214, 148, 0.16),
-                    rgba(224, 187, 104, 0.05)
-                );
-                border: 1px solid rgba(242, 214, 148, 0.42);
-                box-shadow:
-                    inset 0 0 0 1px rgba(242, 214, 148, 0.06),
-                    0 14px 34px rgba(242, 214, 148, 0.09);
+                color: var(--bg-deep);
+                background: var(--primary);
+                border: 1px solid var(--primary);
+                box-shadow: 0 10px 36px rgba(242, 214, 148, 0.12);
             }
 
             .button-primary:hover,
             .button-primary:focus-visible {
                 transform: translateY(-2px);
-                color: var(--gold);
-                background: linear-gradient(
-                    160deg,
-                    rgba(242, 214, 148, 0.24),
-                    rgba(224, 187, 104, 0.09)
-                );
-                border-color: rgba(242, 214, 148, 0.68);
-                box-shadow:
-                    inset 0 0 0 1px rgba(242, 214, 148, 0.1),
-                    0 18px 42px rgba(242, 214, 148, 0.16);
+                background: var(--gold);
+                border-color: var(--gold);
                 outline: none;
             }
 
@@ -749,11 +516,6 @@
             }
 
             @media (max-width: 600px) {
-                #top,
-                #research {
-                    scroll-margin-top: 78px;
-                }
-
                 .topbar {
                     min-height: 66px;
                 }
@@ -810,76 +572,42 @@
                 *::after {
                     scroll-behavior: auto !important;
                     transition-duration: 0.01ms !important;
-                    animation-duration: 0.01ms !important;
-                    animation-iteration-count: 1 !important;
-                }
-
-                html.zte-first-visit .hero h1,
-                html.zte-first-visit .hero-copy,
-                html.zte-first-visit .ai-line,
-                html.zte-first-visit .hero-actions,
-                html.zte-first-visit .demo-reveal {
-                    opacity: 1 !important;
-                    transform: none !important;
                 }
             }
         </style>
     </head>
 
     <body>
-        <div class="ambient-data" aria-hidden="true">
-            <svg viewBox="0 0 1440 760" preserveAspectRatio="none">
-                <path
-                    class="ambient-trace"
-                    d="M-40 430 C110 430 150 392 260 405 S420 458 535 398 S715 315 830 354 S1020 445 1140 386 S1320 332 1490 346"
+        <header class="shell topbar">
+            <a class="brand" href="#top" aria-label="ZeroToExpire home">
+                <img
+                    class="brand-ai-chip"
+                    src="media/ai_chip.svg"
+                    alt=""
+                    aria-hidden="true"
                 />
-                <path
-                    class="ambient-trace ambient-trace--soft"
-                    d="M-20 510 C130 482 205 520 330 490 S545 426 675 462 S890 520 1010 470 S1240 404 1470 454"
-                />
-                <path
-                    class="ambient-trace ambient-trace--soft"
-                    d="M-20 278 C120 310 230 252 355 286 S570 344 700 296 S920 226 1060 274 S1275 330 1480 258"
-                />
-                <circle class="ambient-point" cx="830" cy="354" r="2.2" />
-                <circle class="ambient-point" cx="1140" cy="386" r="1.7" />
-                <circle class="ambient-point" cx="700" cy="296" r="1.5" />
-            </svg>
-        </div>
-        <div class="boot-pulse" aria-hidden="true"></div>
+                <span class="brand-name">ZEROTOEXPIRE</span>
+            </a>
 
-        <header class="topbar-wrap">
-            <div class="shell topbar">
-                <a class="brand" href="#top" aria-label="ZeroToExpire home">
-                    <img
-                        class="brand-ai-chip"
-                        src="media/ai_chip.svg"
-                        alt=""
-                        aria-hidden="true"
-                    />
-                    <span class="brand-name">ZEROTOEXPIRE</span>
-                </a>
-
-                <div class="top-actions">
-                    <a
-                        class="top-link"
-                        href="mailto:fjgazocar@gmail.com?subject=ZeroToExpire%20Platform%20Demonstration"
-                        >REQUEST DEMO</a
-                    >
-                    <a
-                        class="top-link linkedin-link"
-                        href="https://www.linkedin.com/in/fjgazocar/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        >LINKEDIN ↗</a
-                    >
-                </div>
+            <div class="top-actions">
+                <a
+                    class="top-link"
+                    href="mailto:fjgazocar@gmail.com?subject=ZeroToExpire%20Platform%20Demonstration"
+                    >REQUEST DEMO</a
+                >
+                <a
+                    class="top-link linkedin-link"
+                    href="https://www.linkedin.com/in/fjgazocar/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >LINKEDIN ↗</a
+                >
             </div>
         </header>
 
         <main id="top">
             <section class="shell hero">
-                <p class="eyebrow" data-full-text="Private market intelligence platform">Private market intelligence platform</p>
+                <p class="eyebrow">Private market intelligence platform</p>
                 <h1>
                     Market intelligence built for zer<img
                         class="inline-chip"
@@ -924,7 +652,7 @@
                 </div>
             </section>
 
-            <section class="shell demo-reveal" aria-label="Platform demonstration">
+            <section class="shell" aria-label="Platform demonstration">
                 <div class="media-frame">
                     <video
                         class="video-shell"
@@ -951,7 +679,7 @@
             </section>
 
             <section class="shell section" id="research">
-                <div class="section-head reveal">
+                <div class="section-head">
                     <div>
                         <p class="section-kicker">Research + validation</p>
                         <h2>
@@ -967,7 +695,7 @@
                     </div>
                 </div>
 
-                <div class="research-grid reveal">
+                <div class="research-grid">
                     <article class="research-card">
                         <div class="image-shell">
                             <img
@@ -1006,7 +734,7 @@
                 </div>
             </section>
 
-            <section class="shell contact reveal" id="contact">
+            <section class="shell contact" id="contact">
                 <p class="section-kicker">Private demonstrations</p>
                 <h2>Interested in exploring the system in detail?</h2>
                 <p class="contact-copy">
@@ -1036,84 +764,5 @@
             <span>ZEROTOEXPIRE · Private market intelligence</span>
             <span>© 2026 Francisco Azocar</span>
         </footer>
-
-        <script>
-            (() => {
-                const root = document.documentElement;
-                const eyebrow = document.querySelector(".eyebrow");
-
-                if (!root.classList.contains("zte-first-visit") || !eyebrow) {
-                    root.classList.add("intro-ready");
-                    return;
-                }
-
-                const fullText =
-                    eyebrow.dataset.fullText || eyebrow.textContent.trim();
-                eyebrow.textContent = "";
-                eyebrow.classList.add("is-typing");
-
-                let index = 0;
-                const typeNext = () => {
-                    if (index < fullText.length) {
-                        eyebrow.textContent += fullText[index];
-                        index += 1;
-                        window.setTimeout(typeNext, 27);
-                        return;
-                    }
-
-                    window.setTimeout(() => {
-                        root.classList.add("intro-ready");
-
-                        try {
-                            localStorage.setItem("zte_intro_seen_v1", "1");
-                        } catch (_) {
-                            // Storage is optional; the experience still works.
-                        }
-                    }, 260);
-                };
-
-                window.setTimeout(typeNext, 220);
-            })();
-        </script>
-
-        <script>
-            (() => {
-                const header = document.querySelector(".topbar-wrap");
-                if (!header) return;
-
-                const onScroll = () => {
-                    header.classList.toggle("is-scrolled", window.scrollY > 8);
-                };
-
-                onScroll();
-                window.addEventListener("scroll", onScroll, { passive: true });
-            })();
-        </script>
-
-        <script>
-            (() => {
-                const revealEls = document.querySelectorAll(".reveal");
-                if (!revealEls.length) return;
-
-                if (!("IntersectionObserver" in window)) {
-                    revealEls.forEach((el) => el.classList.add("is-visible"));
-                    return;
-                }
-
-                const observer = new IntersectionObserver(
-                    (entries) => {
-                        entries.forEach((entry) => {
-                            if (entry.isIntersecting) {
-                                entry.target.classList.add("is-visible");
-                                observer.unobserve(entry.target);
-                            }
-                        });
-                    },
-                    { threshold: 0.15, rootMargin: "0px 0px -40px 0px" },
-                );
-
-                revealEls.forEach((el) => observer.observe(el));
-            })();
-        </script>
     </body>
 </html>
