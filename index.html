@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- ZeroToExpire WebGL2 prototype: DOM for content/accessibility, raw WebGL2 for retained visual surfaces. -->
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -90,6 +91,18 @@
                 overflow-x: hidden;
             }
 
+            /* WebGL2 owns the persistent visual surface. The DOM above it
+               still owns text, links, accessibility, and document flow. */
+            #gl-surface {
+                position: fixed;
+                inset: 0;
+                width: 100vw;
+                height: 100vh;
+                display: block;
+                pointer-events: none;
+                z-index: 0;
+            }
+
             body::before {
                 content: "";
                 position: fixed;
@@ -113,6 +126,7 @@
                         transparent 30rem
                     );
                 mask-image: linear-gradient(to bottom, black 0%, black 66%, transparent 96%);
+                display: none;
             }
 
             .ambient-data {
@@ -526,16 +540,10 @@
             .media-frame {
                 position: relative;
                 overflow: hidden;
-                border: 1px solid var(--line);
+                border: 1px solid transparent;
                 border-radius: var(--radius);
-                background:
-                    linear-gradient(
-                        135deg,
-                        rgba(242, 214, 148, 0.035),
-                        transparent 34%
-                    ),
-                    var(--bg-deep);
-                box-shadow: var(--shadow);
+                background: transparent;
+                box-shadow: none;
             }
 
             .media-frame::before {
@@ -633,15 +641,15 @@
             }
 
             .research-card {
-                border: 1px solid var(--line-soft);
+                border: 1px solid transparent;
                 border-radius: var(--radius);
-                background: rgba(8, 7, 5, 0.78);
+                background: transparent;
                 overflow: hidden;
                 transition: 180ms ease;
             }
 
             .research-card:hover {
-                border-color: var(--line);
+                border-color: transparent;
                 transform: translateY(-2px);
             }
 
@@ -827,26 +835,7 @@
     </head>
 
     <body>
-        <div class="ambient-data" aria-hidden="true">
-            <svg viewBox="0 0 1440 760" preserveAspectRatio="none">
-                <path
-                    class="ambient-trace"
-                    d="M-40 430 C110 430 150 392 260 405 S420 458 535 398 S715 315 830 354 S1020 445 1140 386 S1320 332 1490 346"
-                />
-                <path
-                    class="ambient-trace ambient-trace--soft"
-                    d="M-20 510 C130 482 205 520 330 490 S545 426 675 462 S890 520 1010 470 S1240 404 1470 454"
-                />
-                <path
-                    class="ambient-trace ambient-trace--soft"
-                    d="M-20 278 C120 310 230 252 355 286 S570 344 700 296 S920 226 1060 274 S1275 330 1480 258"
-                />
-                <circle class="ambient-point" cx="830" cy="354" r="2.2" />
-                <circle class="ambient-point" cx="1140" cy="386" r="1.7" />
-                <circle class="ambient-point" cx="700" cy="296" r="1.5" />
-            </svg>
-        </div>
-        <div class="boot-pulse" aria-hidden="true"></div>
+        <canvas id="gl-surface" aria-hidden="true"></canvas>
 
         <header class="topbar-wrap">
             <div class="shell topbar">
@@ -1036,6 +1025,235 @@
             <span>ZEROTOEXPIRE · Private market intelligence</span>
             <span>© 2026 Francisco Azocar</span>
         </footer>
+
+        <script>
+            (() => {
+                "use strict";
+
+                const canvas = document.getElementById("gl-surface");
+                if (!canvas) return;
+
+                const gl = canvas.getContext("webgl2", {
+                    alpha: false,
+                    antialias: false,
+                    depth: false,
+                    stencil: false,
+                    preserveDrawingBuffer: false,
+                    powerPreference: "high-performance",
+                });
+
+                if (!gl) {
+                    console.warn("WebGL2 unavailable; falling back to CSS background.");
+                    canvas.style.display = "none";
+                    return;
+                }
+
+                const vertexSource = `#version 300 es
+                    precision highp float;
+
+                    const vec2 POSITIONS[3] = vec2[3](
+                        vec2(-1.0, -1.0),
+                        vec2( 3.0, -1.0),
+                        vec2(-1.0,  3.0)
+                    );
+
+                    void main() {
+                        gl_Position = vec4(POSITIONS[gl_VertexID], 0.0, 1.0);
+                    }
+                `;
+
+                const fragmentSource = `#version 300 es
+                    precision highp float;
+
+                    out vec4 outColor;
+
+                    uniform vec2 uResolution;
+                    uniform float uTime;
+                    uniform float uDpr;
+                    uniform int uRectCount;
+                    uniform vec4 uRects[8];
+
+                    float roundedBoxSdf(vec2 p, vec2 halfSize, float radius) {
+                        vec2 q = abs(p) - halfSize + radius;
+                        return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - radius;
+                    }
+
+                    float trace(float y, float target, float widthPx) {
+                        float d = abs(y - target) * uResolution.y;
+                        return 1.0 - smoothstep(widthPx, widthPx + 1.25 * uDpr, d);
+                    }
+
+                    void main() {
+                        vec2 uv = gl_FragCoord.xy / uResolution;
+                        vec2 domPx = vec2(gl_FragCoord.x, uResolution.y - gl_FragCoord.y);
+
+                        vec3 bgTop = vec3(0.0667, 0.0588, 0.0431);
+                        vec3 bgMid = vec3(0.0392, 0.0353, 0.0275);
+                        vec3 bgDeep = vec3(0.0196, 0.0196, 0.0157);
+
+                        float vertical = smoothstep(0.0, 1.0, uv.y);
+                        vec3 color = mix(bgDeep, bgTop, vertical);
+                        color = mix(color, bgMid, 0.22);
+
+                        // Warm hero glow, replacing CSS radial gradients.
+                        vec2 heroDelta = vec2((uv.x - 0.50) * 1.10, (uv.y - 1.04) * 1.55);
+                        float heroGlow = exp(-dot(heroDelta, heroDelta) * 8.0);
+                        color += vec3(0.145, 0.112, 0.055) * heroGlow * 0.33;
+
+                        // Subtle side ambience.
+                        vec2 leftDelta = vec2((uv.x - 0.18) * 1.25, (uv.y - 0.58) * 1.8);
+                        vec2 rightDelta = vec2((uv.x - 0.82) * 1.25, (uv.y - 0.61) * 1.8);
+                        color += vec3(0.11, 0.085, 0.04) * exp(-dot(leftDelta, leftDelta) * 8.0) * 0.055;
+                        color += vec3(0.10, 0.085, 0.06) * exp(-dot(rightDelta, rightDelta) * 8.0) * 0.045;
+
+                        // Three retained analytic traces. No SVG objects are created.
+                        float x = uv.x;
+                        float drift = uTime * 0.035;
+                        float y1 = 0.57 + 0.045 * sin(x * 11.0 + drift) + 0.018 * sin(x * 25.0 - drift * 0.6);
+                        float y2 = 0.43 + 0.034 * sin(x * 12.5 - 0.7 + drift * 0.55) + 0.014 * sin(x * 20.0 + 1.4);
+                        float y3 = 0.69 + 0.031 * sin(x * 14.0 + 1.2 - drift * 0.4) + 0.013 * sin(x * 29.0);
+
+                        float t1 = trace(uv.y, y1, 0.72 * uDpr);
+                        float t2 = trace(uv.y, y2, 0.62 * uDpr);
+                        float t3 = trace(uv.y, y3, 0.62 * uDpr);
+                        color += vec3(0.91, 0.855, 0.73) * t1 * 0.060;
+                        color += vec3(0.88, 0.73, 0.41) * (t2 + t3) * 0.036;
+
+                        // WebGL-backed panel surfaces. DOM only supplies their rectangles.
+                        for (int i = 0; i < 8; ++i) {
+                            if (i >= uRectCount) break;
+
+                            vec4 r = uRects[i];
+                            vec2 center = r.xy + r.zw * 0.5;
+                            vec2 halfSize = r.zw * 0.5;
+                            float sdf = roundedBoxSdf(domPx - center, halfSize, 12.0 * uDpr);
+
+                            float inside = 1.0 - smoothstep(-1.0 * uDpr, 0.0, sdf);
+                            float border = 1.0 - smoothstep(0.75 * uDpr, 1.75 * uDpr, abs(sdf));
+
+                            vec3 panel = vec3(0.0275, 0.0240, 0.0170);
+                            color = mix(color, panel, inside * 0.88);
+                            color += vec3(0.29, 0.25, 0.18) * border * 0.36;
+
+                            // Small top-left warm reflection similar to the original card gradient.
+                            vec2 local = (domPx - r.xy) / max(r.zw, vec2(1.0));
+                            float reflection = exp(-dot(local - vec2(0.02, 0.02), local - vec2(0.02, 0.02)) * 8.0);
+                            color += vec3(0.08, 0.065, 0.035) * reflection * inside * 0.18;
+                        }
+
+                        // Very faint scan texture to make the GPU layer visible during experimentation.
+                        float scan = 0.5 + 0.5 * sin(domPx.y * 0.48 / max(uDpr, 1.0));
+                        color += vec3(0.012) * scan * 0.08;
+
+                        outColor = vec4(color, 1.0);
+                    }
+                `;
+
+                const compile = (type, source) => {
+                    const shader = gl.createShader(type);
+                    gl.shaderSource(shader, source);
+                    gl.compileShader(shader);
+                    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                        const log = gl.getShaderInfoLog(shader);
+                        gl.deleteShader(shader);
+                        throw new Error(log || "Shader compilation failed");
+                    }
+                    return shader;
+                };
+
+                const program = gl.createProgram();
+                gl.attachShader(program, compile(gl.VERTEX_SHADER, vertexSource));
+                gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fragmentSource));
+                gl.linkProgram(program);
+                if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                    throw new Error(gl.getProgramInfoLog(program) || "WebGL program link failed");
+                }
+
+                gl.useProgram(program);
+
+                const uniforms = {
+                    resolution: gl.getUniformLocation(program, "uResolution"),
+                    time: gl.getUniformLocation(program, "uTime"),
+                    dpr: gl.getUniformLocation(program, "uDpr"),
+                    rectCount: gl.getUniformLocation(program, "uRectCount"),
+                    rects: gl.getUniformLocation(program, "uRects[0]"),
+                };
+
+                // Retained CPU-side state. No geometry is rebuilt per frame.
+                const rectData = new Float32Array(8 * 4);
+                let rectCount = 0;
+                let layoutDirty = true;
+                let currentDpr = 1;
+
+                const panelElements = () => [
+                    ...document.querySelectorAll(".media-frame, .research-card"),
+                ].slice(0, 8);
+
+                const syncCanvasSize = () => {
+                    currentDpr = Math.min(window.devicePixelRatio || 1, 2);
+                    const width = Math.max(1, Math.round(window.innerWidth * currentDpr));
+                    const height = Math.max(1, Math.round(window.innerHeight * currentDpr));
+                    if (canvas.width !== width || canvas.height !== height) {
+                        canvas.width = width;
+                        canvas.height = height;
+                        gl.viewport(0, 0, width, height);
+                    }
+                };
+
+                const syncPanelRects = () => {
+                    rectData.fill(0);
+                    const nodes = panelElements();
+                    rectCount = 0;
+
+                    for (const node of nodes) {
+                        const r = node.getBoundingClientRect();
+                        if (r.bottom < -40 || r.top > window.innerHeight + 40) continue;
+
+                        const i = rectCount * 4;
+                        rectData[i + 0] = r.left * currentDpr;
+                        rectData[i + 1] = r.top * currentDpr;
+                        rectData[i + 2] = r.width * currentDpr;
+                        rectData[i + 3] = r.height * currentDpr;
+                        rectCount += 1;
+                        if (rectCount === 8) break;
+                    }
+
+                    layoutDirty = false;
+                };
+
+                const markLayoutDirty = () => {
+                    layoutDirty = true;
+                };
+
+                window.addEventListener("resize", markLayoutDirty, { passive: true });
+                window.addEventListener("scroll", markLayoutDirty, { passive: true });
+
+                if ("ResizeObserver" in window) {
+                    const resizeObserver = new ResizeObserver(markLayoutDirty);
+                    resizeObserver.observe(document.body);
+                }
+
+                const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                const started = performance.now();
+
+                const render = (now) => {
+                    syncCanvasSize();
+                    if (layoutDirty) syncPanelRects();
+
+                    gl.useProgram(program);
+                    gl.uniform2f(uniforms.resolution, canvas.width, canvas.height);
+                    gl.uniform1f(uniforms.time, reducedMotion ? 0 : (now - started) * 0.001);
+                    gl.uniform1f(uniforms.dpr, currentDpr);
+                    gl.uniform1i(uniforms.rectCount, rectCount);
+                    gl.uniform4fv(uniforms.rects, rectData);
+                    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+                    requestAnimationFrame(render);
+                };
+
+                requestAnimationFrame(render);
+            })();
+        </script>
 
         <script>
             (() => {
