@@ -1,22 +1,232 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
-  <g stroke="#e8dabb" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M4.25.75v1.7M6.75.75v1.7M9.25.75v1.7M11.75.75v1.7M4.25 13.55v1.7M6.75 13.55v1.7M9.25 13.55v1.7M11.75 13.55v1.7M.75 4.25h1.7M.75 6.75h1.7M.75 9.25h1.7M.75 11.75h1.7M13.55 4.25h1.7M13.55 6.75h1.7M13.55 9.25h1.7M13.55 11.75h1.7" stroke-width=".82"/>
-    <rect x="2.35" y="2.35" width="11.3" height="11.3" stroke-width=".9"/>
-    <rect x="3.12" y="3.12" width="9.76" height="9.76" stroke-width=".34" opacity=".52"/>
-    <path d="M3.55 5.05V4.25l.7-.7h1.4l.55.55h.75M9.7 3.55h1.75l1 .95v1.15M3.55 10.45v1.25l.7.75H5.7l.5-.5h.8M9.15 12.45h1.75l1.55-1.45v-.8" stroke-width=".3" opacity=".56"/>
-    <circle cx="6.95" cy="4.1" r=".23" fill="#e8dabb" stroke="none" opacity=".7"/>
-    <circle cx="9.7" cy="3.55" r=".23" fill="#e8dabb" stroke="none" opacity=".7"/>
-    <circle cx="7" cy="11.95" r=".23" fill="#e8dabb" stroke="none" opacity=".7"/>
-    <circle cx="9.15" cy="12.45" r=".23" fill="#e8dabb" stroke="none" opacity=".7"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1254" height="1254" viewBox="0 0 1254 1254" role="img" aria-label="Animated ZeroToExpire icon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#050504"/>
+      <stop offset="0.55" stop-color="#080705"/>
+      <stop offset="1" stop-color="#030302"/>
+    </linearGradient>
+
+    <radialGradient id="halo" cx="50%" cy="46%" r="48%">
+      <stop offset="0" stop-color="#8f6528" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8d6122"/>
+      <stop offset="0.22" stop-color="#e0bb68"/>
+      <stop offset="0.48" stop-color="#f2d694"/>
+      <stop offset="0.72" stop-color="#c99d49"/>
+      <stop offset="1" stop-color="#7f561e"/>
+    </linearGradient>
+
+    <linearGradient id="goldBright" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff0b5"/>
+      <stop offset="0.35" stop-color="#f2d694"/>
+      <stop offset="0.72" stop-color="#d3a845"/>
+      <stop offset="1" stop-color="#9b6d24"/>
+    </linearGradient>
+
+    <linearGradient id="redCandle" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c25740"/>
+      <stop offset="0.55" stop-color="#9e4230"/>
+      <stop offset="1" stop-color="#7e3325"/>
+    </linearGradient>
+
+    <linearGradient id="greenCandle" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7da876"/>
+      <stop offset="0.52" stop-color="#537752"/>
+      <stop offset="1" stop-color="#3f6041"/>
+    </linearGradient>
+
+    <filter id="goldGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feFlood flood-color="#cfa453" flood-opacity="0.42" result="glow"/>
+      <feComposite in="glow" in2="blur" operator="in" result="soft"/>
+      <feMerge>
+        <feMergeNode in="soft"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="nodeGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="9" result="blur"/>
+      <feFlood flood-color="#e0bb68" flood-opacity="0.72" result="glow"/>
+      <feComposite in="glow" in2="blur" operator="in" result="soft"/>
+      <feMerge>
+        <feMergeNode in="soft"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="subtleShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#000000" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+
+  
+
+  <g id="expandedArtwork" transform="translate(72.39 39.80) scale(1.33) translate(-204 -155)">
+  <g fill="url(#gold)" stroke="#e9c56a" stroke-width="2.3" filter="url(#goldGlow)">
+    <rect x="400" y="155" width="28" height="93" rx="5"/>
+    <rect x="507" y="155" width="28" height="93" rx="5"/>
+    <rect x="614" y="155" width="28" height="93" rx="5"/>
+    <rect x="721" y="155" width="28" height="93" rx="5"/>
+    <rect x="828" y="155" width="28" height="93" rx="5"/>
+
+    <rect x="397" y="947" width="28" height="91" rx="5"/>
+    <rect x="505" y="947" width="28" height="91" rx="5"/>
+    <rect x="613" y="947" width="28" height="91" rx="5"/>
+    <rect x="721" y="947" width="28" height="91" rx="5"/>
+    <rect x="829" y="947" width="28" height="91" rx="5"/>
+
+    <rect x="204" y="343" width="82" height="28" rx="5"/>
+    <rect x="204" y="456" width="82" height="28" rx="5"/>
+    <rect x="204" y="569" width="82" height="28" rx="5"/>
+    <rect x="204" y="682" width="82" height="28" rx="5"/>
+    <rect x="204" y="795" width="82" height="28" rx="5"/>
+
+    <rect x="955" y="343" width="83" height="28" rx="5"/>
+    <rect x="955" y="456" width="83" height="28" rx="5"/>
+    <rect x="955" y="569" width="83" height="28" rx="5"/>
+    <rect x="955" y="682" width="83" height="28" rx="5"/>
+    <rect x="955" y="795" width="83" height="28" rx="5"/>
   </g>
-  <path d="M3.85 7.65 5.65 5.9 7.8 6.9 9.9 5.15 12.05 4.2" stroke="#e0bb68" stroke-width=".62" stroke-linecap="round" stroke-linejoin="round">
-    <animate attributeName="d" dur="4.8s" repeatCount="indefinite" calcMode="discrete" values="M3.85 7.65 5.65 5.9 7.8 6.9 9.9 5.15 12.05 4.2;M3.85 7.65 5.65 5.9 7.8 6.9 9.9 5.15 12.05 4.55;M3.85 7.65 5.65 5.9 7.8 6.9 9.9 5.15 12.05 4.05;M3.85 7.65 5.65 5.9 7.8 6.9 9.9 5.15 12.05 4.82;M3.85 7.65 5.65 5.9 7.8 6.9 9.9 5.15 12.05 4.2"/>
-  </path>
-  <g fill="#e0bb68"><circle cx="3.85" cy="7.65" r=".4"/><circle cx="5.65" cy="5.9" r=".4"/><circle cx="7.8" cy="6.9" r=".4"/><circle cx="9.9" cy="5.15" r=".4"/><circle cx="12.05" cy="4.2" r=".4"><animate attributeName="cy" dur="4.8s" repeatCount="indefinite" calcMode="discrete" values="4.2;4.55;4.05;4.82;4.2"/></circle></g>
-  <path d="M4.2 8.1v3.75" stroke="#9e4230" stroke-width=".58" stroke-linecap="round"/><rect x="3.55" y="8.72" width="1.3" height="2.25" fill="#9e4230"/>
-  <path d="M6.65 7.35v3.8" stroke="#6f9569" stroke-width=".58" stroke-linecap="round"/><rect x="6" y="7.95" width="1.3" height="2.35" fill="#6f9569"/>
-  <path d="M9.05 8.05v3.65" stroke="#9e4230" stroke-width=".58" stroke-linecap="round"/><rect x="8.4" y="8.65" width="1.3" height="2.05" fill="#9e4230"/>
-  <path d="M11.45 6.45v4.6" stroke="#6f9569" stroke-width=".62" stroke-linecap="round"><animate attributeName="stroke" dur="4.8s" repeatCount="indefinite" calcMode="discrete" values="#6f9569;#6f9569;#6f9569;#9e4230;#6f9569"/></path>
-  <rect x="10.78" y="7.18" width="1.34" height="2.02" fill="#6f9569"><animate attributeName="y" dur="4.8s" repeatCount="indefinite" calcMode="discrete" values="7.18;8.05;9.05;9.2;7.18"/><animate attributeName="height" dur="4.8s" repeatCount="indefinite" calcMode="discrete" values="2.02;1.15;.15;.65;2.02"/><animate attributeName="fill" dur="4.8s" repeatCount="indefinite" calcMode="discrete" values="#6f9569;#6f9569;#6f9569;#9e4230;#6f9569"/></rect>
-  <path d="M4.15 12.05h1.05M10.8 11.85h1.05M11.85 6.1v.55" stroke="#e8dabb" stroke-width=".28" stroke-linecap="round" opacity=".46"/>
+
+  <g>
+    <rect x="280" y="242" width="690" height="706" rx="38"
+          fill="none" stroke="url(#gold)" stroke-width="21"/>
+    <rect x="294" y="256" width="662" height="678" rx="29"
+          fill="none" stroke="#f0d58f" stroke-width="2.6" opacity="0.85"/>
+  </g>
+
+  <rect x="329" y="292" width="592" height="612" rx="18"
+        fill="none" stroke="url(#goldBright)" stroke-width="8" filter="url(#goldGlow)"/>
+  <rect x="339" y="302" width="572" height="592" rx="13"
+        fill="none" stroke="#7f5b25" stroke-width="2.5" opacity="0.95"/>
+
+  <g fill="none" stroke="#c99d49" stroke-width="4.3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M362 411 V365 L404 324 H472 L505 356 H536"/>
+    <path d="M687 326 H788 L825 363 V403"/>
+    <path d="M361 763 V821 L405 864 H474"/>
+    <path d="M670 866 H768 L812 822 V785"/>
+    <path d="M735 833 H791"/>
+  </g>
+
+  <g fill="none" stroke="#c99d49" stroke-width="4">
+    <circle cx="362" cy="411" r="8"/>
+    <circle cx="536" cy="356" r="8"/>
+    <circle cx="687" cy="326" r="8"/>
+    <circle cx="825" cy="403" r="8"/>
+    <circle cx="361" cy="763" r="8"/>
+    <circle cx="474" cy="864" r="8"/>
+    <circle cx="670" cy="866" r="8"/>
+    <circle cx="812" cy="785" r="8"/>
+    <circle cx="735" cy="833" r="8"/>
+  </g>
+
+  <g>
+    <line x1="423" y1="624" x2="423" y2="846" stroke="#6f9569" stroke-width="6"/>
+    <rect x="401" y="675" width="44" height="127" fill="url(#greenCandle)" stroke="#7fa678" stroke-width="2"/>
+
+    <line x1="530" y1="589" x2="530" y2="827" stroke="#9e4230" stroke-width="6"/>
+    <rect x="508" y="638" width="45" height="137" fill="url(#redCandle)" stroke="#c25740" stroke-width="2"/>
+
+    <line x1="646" y1="590" x2="646" y2="825" stroke="#9e4230" stroke-width="6"/>
+    <rect x="624" y="638" width="44" height="129" fill="url(#redCandle)" stroke="#c25740" stroke-width="2"/>
+
+    <line x1="752" y1="500" x2="752" y2="755" stroke="#537752" stroke-width="6"/>
+    <rect x="730" y="548" width="44" height="152" fill="url(#greenCandle)" stroke="#7fa678" stroke-width="2"/>
+  </g>
+
+  <!-- line only moves vertically at the last point -->
+  <polyline points="392,603 483,504 588,556 720,438 842,369"
+      fill="none" stroke="#b88528" stroke-width="10"
+      stroke-linecap="round" stroke-linejoin="round" opacity="0.82"
+      filter="url(#nodeGlow)">
+    <animate attributeName="points" dur="4.8s" repeatCount="indefinite"
+      keyTimes="0;0.2;0.4;0.6;0.8;1"
+      values="
+      392,603 483,504 588,556 720,438 842,369;
+      392,603 483,504 588,556 720,438 842,454;
+      392,603 483,504 588,556 720,438 842,421;
+      392,603 483,504 588,556 720,438 842,349;
+      392,603 483,504 588,556 720,438 842,482;
+      392,603 483,504 588,556 720,438 842,369"/>
+  </polyline>
+
+  <polyline points="392,603 483,504 588,556 720,438 842,369"
+      fill="none" stroke="#f2d694" stroke-width="5"
+      stroke-linecap="round" stroke-linejoin="round">
+    <animate attributeName="points" dur="4.8s" repeatCount="indefinite"
+      keyTimes="0;0.2;0.4;0.6;0.8;1"
+      values="
+      392,603 483,504 588,556 720,438 842,369;
+      392,603 483,504 588,556 720,438 842,454;
+      392,603 483,504 588,556 720,438 842,421;
+      392,603 483,504 588,556 720,438 842,349;
+      392,603 483,504 588,556 720,438 842,482;
+      392,603 483,504 588,556 720,438 842,369"/>
+  </polyline>
+
+  <g filter="url(#nodeGlow)">
+    <g fill="#f7dd91" stroke="#c99124" stroke-width="4">
+      <circle cx="392" cy="603" r="14"/>
+      <circle cx="483" cy="504" r="14"/>
+      <circle cx="588" cy="556" r="14"/>
+      <circle cx="720" cy="438" r="14"/>
+    </g>
+    <g fill="#fff8d6">
+      <circle cx="392" cy="603" r="6"/>
+      <circle cx="483" cy="504" r="6"/>
+      <circle cx="588" cy="556" r="6"/>
+      <circle cx="720" cy="438" r="6"/>
+    </g>
+  </g>
+
+  <g filter="url(#nodeGlow)">
+    <circle cx="842" cy="369" r="14" fill="#f7dd91" stroke="#c99124" stroke-width="4">
+      <animate attributeName="cy" dur="4.8s" repeatCount="indefinite"
+        values="369;454;421;349;482;369"/>
+      <animate attributeName="r" dur="4.8s" repeatCount="indefinite"
+        values="14;14.5;14;14.5;14;14"/>
+    </circle>
+    <circle cx="842" cy="369" r="6" fill="#fff8d6">
+      <animate attributeName="cy" dur="4.8s" repeatCount="indefinite"
+        values="369;454;421;349;482;369"/>
+    </circle>
+  </g>
+
+  <!-- current candle v7: close fully synced to line endpoint; transparent version can omit black fills -->
+  <g id="currentCandle">
+
+    <!-- fixed vertical wick: never moves, only recolors -->
+    <line x1="842" y1="470" x2="842" y2="668"
+          stroke="#6f9569" stroke-width="5" stroke-linecap="round">
+      <animate attributeName="stroke" dur="4.8s" repeatCount="indefinite"
+        keyTimes="0;0.2;0.4;0.6;0.8;1" calcMode="discrete" values="#6f9569;#9e4230;#6f9569;#6f9569;#9e4230;#6f9569"/>
+    </line>
+
+    <!-- bullish body: OPEN anchored at the bottom edge; only CLOSE (top edge) moves -->
+    <rect x="820" y="514" width="44" height="38" rx="3"
+          fill="#537752" stroke="#97b88b" stroke-width="2" opacity="1">
+      <animate attributeName="y" dur="4.8s" repeatCount="indefinite"
+        keyTimes="0;0.2;0.4;0.6;0.8;1" values="514;546;551;500;546;514"/>
+      <animate attributeName="height" dur="4.8s" repeatCount="indefinite"
+        keyTimes="0;0.2;0.4;0.6;0.8;1" values="38;6;6;52;6;38"/>
+      <animate attributeName="opacity" dur="4.8s" repeatCount="indefinite"
+        keyTimes="0;0.2;0.4;0.6;0.8;1" calcMode="discrete" values="1;0;1;1;0;1"/>
+    </rect>
+
+    <!-- bearish body: OPEN anchored at the top edge; only CLOSE (bottom edge) moves -->
+    <rect x="820" y="552" width="44" height="6" rx="3"
+          fill="#9e4230" stroke="#c25740" stroke-width="2" opacity="0">
+      <animate attributeName="y" dur="4.8s" repeatCount="indefinite"
+        keyTimes="0;0.2;0.4;0.6;0.8;1" values="552;552;552;552;552;552"/>
+      <animate attributeName="height" dur="4.8s" repeatCount="indefinite"
+        keyTimes="0;0.2;0.4;0.6;0.8;1" values="6;23;6;6;43;6"/>
+      <animate attributeName="opacity" dur="4.8s" repeatCount="indefinite"
+        keyTimes="0;0.2;0.4;0.6;0.8;1" calcMode="discrete" values="0;1;0;0;1;0"/>
+    </rect>
+  </g>
+  </g>
 </svg>
