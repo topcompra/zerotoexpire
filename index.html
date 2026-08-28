@@ -814,6 +814,180 @@
 
 
 
+
+
+            /* Interactive WebGL phone companion. On real phones the canvas becomes
+               a full viewport surface; vertical gestures remain owned by the page. */
+            .web-companion {
+                position: relative;
+                padding-top: 104px;
+            }
+
+            .web-companion-grid {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                align-items: center;
+                gap: clamp(44px, 7vw, 110px);
+            }
+
+            .web-companion-copy {
+                max-width: 610px;
+            }
+
+            .web-companion-copy h2 {
+                max-width: 610px;
+            }
+
+            .web-companion-note {
+                margin: 22px 0 0;
+                color: var(--dim);
+                font: 700 0.72rem/1.7 var(--mono);
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+            }
+
+            .web-companion-note strong {
+                color: var(--amber);
+                font-weight: 800;
+            }
+
+            .phone-stage {
+                display: flex;
+                justify-content: center;
+                width: min(42vw, 430px);
+            }
+
+            .phone-frame {
+                position: relative;
+                width: min(390px, 100%);
+                aspect-ratio: 390 / 844;
+                overflow: hidden;
+                border: 1px solid rgba(232, 218, 187, 0.12);
+                border-radius: 28px;
+                background: #050504;
+                box-shadow:
+                    inset 0 0 0 1px rgba(255, 255, 255, 0.018),
+                    0 34px 80px rgba(0, 0, 0, 0.42);
+            }
+
+            #zte-phone-gl {
+                display: block;
+                width: 100%;
+                height: 100%;
+                background: #050504;
+                touch-action: pan-y;
+                user-select: none;
+                -webkit-user-select: none;
+            }
+
+            .phone-account-embed {
+                position: absolute;
+                inset: 0;
+                z-index: 8;
+                display: none;
+                background: #050504;
+            }
+
+            .phone-account-embed.is-open {
+                display: block;
+            }
+
+            .phone-account-frame {
+                display: block;
+                width: 100%;
+                height: 100%;
+                border: 0;
+                background: #050504;
+            }
+
+            .phone-account-back {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                z-index: 2;
+                width: 28px;
+                height: 28px;
+                display: grid;
+                place-items: center;
+                padding: 0;
+                border: 1px solid rgba(232, 218, 187, 0.28);
+                border-radius: 5px;
+                background: rgba(5, 5, 4, 0.82);
+                color: #efe3c8;
+                font: 800 18px/1 Consolas, monospace;
+                cursor: pointer;
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+            }
+
+            .phone-fallback {
+                position: absolute;
+                inset: 0;
+                display: none;
+                place-items: center;
+                padding: 28px;
+                text-align: center;
+                color: var(--muted);
+                background: #050504;
+                font: 700 0.72rem/1.7 var(--mono);
+            }
+
+            /* One research image now carries the historical/forensics proof. */
+            .research-grid {
+                grid-template-columns: minmax(0, 1fr);
+                max-width: 980px;
+                margin-inline: auto;
+            }
+
+            @media (max-width: 860px) {
+                .web-companion-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .web-companion-copy {
+                    margin-inline: auto;
+                    text-align: center;
+                }
+
+                .web-companion-copy .section-copy {
+                    margin-inline: auto;
+                }
+
+                .phone-stage {
+                    width: min(100%, 430px);
+                    margin-inline: auto;
+                }
+            }
+
+            @media (max-width: 600px) {
+                .web-companion {
+                    padding-top: 72px;
+                }
+
+                .web-companion-grid {
+                    gap: 34px;
+                }
+
+                .phone-stage {
+                    width: 100vw;
+                    max-width: none;
+                    margin-left: calc(50% - 50vw);
+                    margin-right: calc(50% - 50vw);
+                }
+
+                .phone-frame {
+                    width: 100vw;
+                    height: 100svh;
+                    min-height: 620px;
+                    aspect-ratio: auto;
+                    border-left: 0;
+                    border-right: 0;
+                    border-radius: 0;
+                    box-shadow: none;
+                }
+            }
+
+
             /* Reference-matched circuit atmosphere. The exact supplied trace is
                reused for the static field and the moving illumination layers, so
                the animation can only light circuitry that already exists. */
@@ -1162,6 +1336,35 @@
                 </p>
             </section>
 
+            <section class="section web-companion reveal" id="web-companion" aria-labelledby="web-companion-title">
+                <div class="shell web-companion-grid">
+                    <div class="web-companion-copy">
+                        <p class="section-kicker">Web companion · WebGL2</p>
+                        <h2 id="web-companion-title">The workstation, carried into the browser.</h2>
+                        <p class="section-copy">
+                            A compact live surface derived from the same market workflow: persistent intraday context,
+                            swappable daily and premium views, option-chain inspection, and replay controls in a phone-scale client.
+                        </p>
+                        <p class="web-companion-note"><strong>Interactive.</strong> Drag G3 horizontally to scrub · swipe vertically to keep exploring the site.</p>
+                    </div>
+                    <div class="phone-stage" aria-label="Interactive ZeroToExpire phone web client">
+                        <div class="phone-frame">
+                            <canvas id="zte-phone-gl" aria-label="Interactive ZeroToExpire WebGL phone surface"></canvas>
+                            <div class="phone-fallback" id="zte-phone-fallback">WebGL2 is unavailable in this browser or GPU configuration.</div>
+                            <div class="phone-account-embed" id="zte-phone-account" aria-hidden="true">
+                                <iframe
+                                    class="phone-account-frame"
+                                    id="zte-phone-account-frame"
+                                    title="ZeroToExpire account panel"
+                                    data-src="file:///C:/Users/Fran%20G/Desktop/python/zerotoexpire_platform/account_html/zte_account_panel_responsive.html"
+                                ></iframe>
+                                <button class="phone-account-back" id="zte-phone-account-back" type="button" aria-label="Return to market surface">&#8249;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <section class="shell section" id="research">
                 <div class="section-head reveal">
                     <div>
@@ -1180,23 +1383,6 @@
                 </div>
 
                 <div class="research-grid reveal">
-                    <article class="research-card">
-                        <div class="image-shell">
-                            <img
-                                class="platform-still"
-                                src="media/gex_panel.png"
-                                alt="Dealer positioning panels and synchronized market charts"
-                            />
-                        </div>
-                        <div class="research-card-copy">
-                            <h3>Dealer positioning, across the surface</h3>
-                            <p>
-                                Read SPX, SPY, and /ES positioning together with
-                                synchronized market context, built for fast
-                                interpretation.
-                            </p>
-                        </div>
-                    </article>
 
                     <article class="research-card">
                         <div class="image-shell">
@@ -1552,6 +1738,410 @@
                 );
 
                 revealEls.forEach((el) => observer.observe(el));
+            })();
+        </script>
+
+        <script>
+            (() => {
+                "use strict";
+
+
+// ZERO_TO_EXPIRE SMALL / PHONE WEBGL2 — HARD-CODED ARCHAEOLOGIST SAMPLE
+// Canonical design target: ~390x844 CSS px portrait.
+// G3 remains persistent. Lower companion swaps DAILY / PUT / CALL / CHAIN.
+
+const canvas=document.getElementById('zte-phone-gl');
+const phoneAccount=document.getElementById('zte-phone-account');
+const phoneAccountFrame=document.getElementById('zte-phone-account-frame');
+const phoneAccountBack=document.getElementById('zte-phone-account-back');
+function openPhoneAccount(){
+ if(!phoneAccount||!phoneAccountFrame)return;
+ if(!phoneAccountFrame.src){phoneAccountFrame.src=phoneAccountFrame.dataset.src;}
+ phoneAccount.classList.add('is-open');
+ phoneAccount.setAttribute('aria-hidden','false');
+}
+function closePhoneAccount(){
+ if(!phoneAccount)return;
+ phoneAccount.classList.remove('is-open');
+ phoneAccount.setAttribute('aria-hidden','true');
+}
+phoneAccountBack?.addEventListener('click',closePhoneAccount);
+const fallback=document.getElementById('zte-phone-fallback');
+if(!canvas)return;
+const gl=canvas.getContext('webgl2',{antialias:false,alpha:false,premultipliedAlpha:false});
+if(!gl){if(fallback)fallback.style.display='grid';return;}
+
+// HARD-CODED ARCHAEOLOGIST THEME — intentionally standalone.
+// Derived from theme_archeologist.py; this sample does not participate in runtime theme swapping.
+const C={
+ bg:[5,5,4,255],          // #050504  matte dark background
+ body:[5,5,4,255],        // #050504  matte dark panel fill
+ deep:[5,5,4,255],        // #050504  COLOR_BACKGROUND_DARKER
+ border:[67,58,44,255],   // #433a2c  COLOR_PANEL_BORDER
+ grid:[55,49,40,125],     // #373128  muted archaeological grid
+ text:[232,218,187,255],  // #e8dabb  COLOR_PRIMARY
+ soft:[190,177,150,230],  // #beb196  COLOR_GRAY_MID
+ muted:[139,128,108,210], // #8b806c  COLOR_GRAY
+ call:[73,112,75,255],    // #49704b  COLOR_GREEN
+ put:[151,65,48,255],     // #974130  COLOR_RED
+ pos:[111,149,105,255],   // #6f9569  positive highlight
+ neg:[158,66,48,255],     // #9e4230  negative highlight
+ gold:[207,164,83,255],   // #cfa453  COLOR_YELLOW / main accent
+ blue:[163,132,75,255],   // #a3844b  COLOR_BLUE
+ slider:[217,140,72,72],  // OA amber slider fill
+ itmCall:[28,45,30,220],  // dark green tint
+ itmPut:[53,27,23,220],   // dark rust tint
+ sel:[242,214,148,42]     // #f2d694 soft selection
+};
+const HEADER_H=58,TABS_H=42,NAV_H=46,GAP=3,SESSION_TICKS=23400,BAR_TICKS=300,BARS=SESSION_TICKS/BAR_TICKS;
+const ORDER_OPEN_H=72,ORDER_CLOSED_H=20,PROGRESS_H=3;
+let cssW=1,cssH=1,dpr=1,layout=null,staticDirty=true,activeTab='PUT',dragging=false;
+let g3ViewBars=0; // 0 = fixed full-session 78-slot view; 24 = zoomed last-24-candle view.
+let secondaryZoom24=false; // Bottom chart: normal density <-> last 24 candles.
+let orderOpen=false;
+const orderState={strike:null,legs:[],qty:1,orderType:'MKT',positions:[]};
+const selectedSideStrike={CALL:null,PUT:null};
+const optionSeriesCache=new Map();
+const OPTION_SERIES_CACHE_MAX=16;
+const crosshair={active:false,panel:'',x:0,y:0};
+const tabs=['DAILY','PUT','CALL','CHAIN'];
+
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function rect(x=0,y=0,w=0,h=0){return{x,y,w,h};}
+function rgba(c){return[c[0]/255,c[1]/255,c[2]/255,c[3]/255];}
+function fmt2(v){return Number.isFinite(v)?v.toFixed(2):'--';}
+function fmtPct(v){return (v>=0?'+':'')+v.toFixed(2)+'%';}
+function fmtMoney(v){return '$'+Math.round(Math.max(0,v));}
+function inside(p,r){return !!r&&p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h;}
+
+class Builder{constructor(stride,cap=4096){this.stride=stride;this.a=new Float32Array(cap*stride);this.n=0;}clear(){this.n=0;}ensure(v){const need=(this.n+v)*this.stride;if(need<=this.a.length)return;let len=this.a.length;while(len<need)len*=2;const b=new Float32Array(len);b.set(this.a);this.a=b;}v(...x){this.ensure(1);this.a.set(x,this.n*this.stride);this.n++;}view(){return this.a.subarray(0,this.n*this.stride);}}
+const ss=new Builder(6,12000),sd=new Builder(6,28000),ts=new Builder(8,14000),td=new Builder(8,36000);
+function solidV(b,x,y,c){const q=rgba(c);b.v(x,y,q[0],q[1],q[2],q[3]);}
+function quad(b,x0,y0,x1,y1,c){if(x1<=x0||y1<=y0)return;solidV(b,x0,y0,c);solidV(b,x1,y0,c);solidV(b,x1,y1,c);solidV(b,x0,y0,c);solidV(b,x1,y1,c);solidV(b,x0,y1,c);}
+function lineQuad(b,x0,y0,x1,y1,t,c){const dx=x1-x0,dy=y1-y0,len=Math.hypot(dx,dy);if(len<1e-4)return;const nx=-dy/len*t*.5,ny=dx/len*t*.5;const a=[x0+nx,y0+ny],bb=[x1+nx,y1+ny],cc=[x1-nx,y1-ny],d=[x0-nx,y0-ny];solidV(b,...a,c);solidV(b,...bb,c);solidV(b,...cc,c);solidV(b,...a,c);solidV(b,...cc,c);solidV(b,...d,c);}
+function strokeRect(b,r,c,t=1){quad(b,r.x,r.y,r.x+r.w,r.y+t,c);quad(b,r.x,r.y+r.h-t,r.x+r.w,r.y+r.h,c);quad(b,r.x,r.y,r.x+t,r.y+r.h,c);quad(b,r.x+r.w-t,r.y,r.x+r.w,r.y+r.h,c);}
+
+const PHONE_MIN_FONT_PX=12;
+const glyph={first:32,last:126,cellW:9,cellH:16,cols:16,rows:6,texture:null};
+function makeGlyphAtlas(){const c=document.createElement('canvas');c.width=glyph.cols*glyph.cellW;c.height=glyph.rows*glyph.cellH;const x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);x.fillStyle='white';x.textAlign='center';x.textBaseline='middle';x.font='13px Consolas, monospace';for(let code=glyph.first;code<=glyph.last;code++){const i=code-glyph.first,col=i%glyph.cols,row=Math.floor(i/glyph.cols);x.fillText(String.fromCharCode(code),col*glyph.cellW+glyph.cellW/2,row*glyph.cellH+glyph.cellH/2+.5);}const tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,c);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);glyph.texture=tex;}
+function effectiveTextScale(scale=1){return Math.max(scale,PHONE_MIN_FONT_PX/13);}
+function textWidth(s,scale=1){scale=effectiveTextScale(scale);return s.length?((s.length-1)*8+glyph.cellW)*scale:0;}
+function text(b,s,x,y,scale=1,c=C.text){scale=effectiveTextScale(scale);const col=rgba(c);let px=x;for(let k=0;k<s.length;k++){let code=s.charCodeAt(k);if(code<glyph.first||code>glyph.last)code=63;const i=code-glyph.first,gx=i%glyph.cols,gy=Math.floor(i/glyph.cols);const u0=gx/glyph.cols,v0=gy/glyph.rows,u1=(gx+1)/glyph.cols,v1=(gy+1)/glyph.rows;const x0=px,y0=y,x1=px+glyph.cellW*scale,y1=y+glyph.cellH*scale;const vv=(xx,yy,u,v)=>b.v(xx,yy,u,v,col[0],col[1],col[2],col[3]);vv(x0,y0,u0,v0);vv(x1,y0,u1,v0);vv(x1,y1,u1,v1);vv(x0,y0,u0,v0);vv(x1,y1,u1,v1);vv(x0,y1,u0,v1);px+=8*scale;}}
+function textCentered(b,s,cx,y,scale=1,c=C.text){text(b,s,cx-textWidth(s,scale)*.5,y,scale,c);}
+function textInRect(b,s,r,scale=1,c=C.text){const es=effectiveTextScale(scale),h=glyph.cellH*es;textCentered(b,s,r.x+r.w*.5,r.y+(r.h-h)*.5,scale,c);}
+
+function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s;}
+function program(vs,fs){const p=gl.createProgram();gl.attachShader(p,shader(gl.VERTEX_SHADER,vs));gl.attachShader(p,shader(gl.FRAGMENT_SHADER,fs));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(p));return p;}
+const solidProg=program(`#version 300 es\nin vec2 aPos;in vec4 aColor;uniform vec2 uRes;out vec4 vColor;void main(){vec2 p=aPos/uRes*2.0-1.0;gl_Position=vec4(p.x,-p.y,0,1);vColor=aColor;}`,`#version 300 es\nprecision mediump float;in vec4 vColor;out vec4 o;void main(){o=vColor;}`);
+const textProg=program(`#version 300 es\nin vec2 aPos;in vec2 aUv;in vec4 aColor;uniform vec2 uRes;out vec2 vUv;out vec4 vColor;void main(){vec2 p=aPos/uRes*2.0-1.0;gl_Position=vec4(p.x,-p.y,0,1);vUv=aUv;vColor=aColor;}`,`#version 300 es\nprecision mediump float;uniform sampler2D uTex;in vec2 vUv;in vec4 vColor;out vec4 o;void main(){float a=texture(uTex,vUv).a;o=vec4(vColor.rgb,vColor.a*a);}`);
+function makeGpu(stride){const vao=gl.createVertexArray(),vbo=gl.createBuffer();gl.bindVertexArray(vao);gl.bindBuffer(gl.ARRAY_BUFFER,vbo);return{vao,vbo,stride,count:0};}
+const gss=makeGpu(6),gsd=makeGpu(6),gts=makeGpu(8),gtd=makeGpu(8);
+function configSolid(g){gl.bindVertexArray(g.vao);gl.bindBuffer(gl.ARRAY_BUFFER,g.vbo);const pos=gl.getAttribLocation(solidProg,'aPos'),col=gl.getAttribLocation(solidProg,'aColor');gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,24,0);gl.enableVertexAttribArray(col);gl.vertexAttribPointer(col,4,gl.FLOAT,false,24,8);}
+function configText(g){gl.bindVertexArray(g.vao);gl.bindBuffer(gl.ARRAY_BUFFER,g.vbo);const pos=gl.getAttribLocation(textProg,'aPos'),uv=gl.getAttribLocation(textProg,'aUv'),col=gl.getAttribLocation(textProg,'aColor');gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,32,0);gl.enableVertexAttribArray(uv);gl.vertexAttribPointer(uv,2,gl.FLOAT,false,32,8);gl.enableVertexAttribArray(col);gl.vertexAttribPointer(col,4,gl.FLOAT,false,32,16);}
+configSolid(gss);configSolid(gsd);configText(gts);configText(gtd);
+function upload(g,b,usage){const v=b.view();gl.bindBuffer(gl.ARRAY_BUFFER,g.vbo);gl.bufferData(gl.ARRAY_BUFFER,v,usage);g.count=b.n;}
+function drawSolid(g){if(!g.count)return;gl.useProgram(solidProg);gl.uniform2f(gl.getUniformLocation(solidProg,'uRes'),cssW,cssH);gl.bindVertexArray(g.vao);gl.drawArrays(gl.TRIANGLES,0,g.count);}
+function drawText(g){if(!g.count)return;gl.useProgram(textProg);gl.uniform2f(gl.getUniformLocation(textProg,'uRes'),cssW,cssH);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,glyph.texture);gl.uniform1i(gl.getUniformLocation(textProg,'uTex'),0);gl.bindVertexArray(g.vao);gl.drawArrays(gl.TRIANGLES,0,g.count);}
+
+const replay={spot:new Float32Array(SESSION_TICKS),call:new Float32Array(SESSION_TICKS),put:new Float32Array(SESSION_TICKS),activity:new Float32Array(SESSION_TICKS),dayHigh:new Float32Array(SESSION_TICKS),dayLow:new Float32Array(SESSION_TICKS),bars:[],callBars:[],putBars:[],daily:[],tick:Math.floor(SESSION_TICKS*.58),playing:true,rate:5,generatedMs:0};
+function rndFactory(seed){let s=seed>>>0;return()=>{s=(1664525*s+1013904223)>>>0;return s/4294967296;};}
+function buildReplay(){
+ const t0=performance.now(),rnd=rndFactory(0x5a17cafe),sig=x=>1/(1+Math.exp(-x));
+ let p=6512.4,noise=0,dayHi=-Infinity,dayLo=Infinity;
+ for(let i=0;i<SESSION_TICKS;i++){
+   const q=i/(SESSION_TICKS-1);
+   // Staged sell day: morning fade, failed bounce, then a faster afternoon break.
+   const morning=-18*q;
+   const leg1=-18*sig((q-.27)/.035);
+   const bounce=10*Math.exp(-Math.pow((q-.43)/.075,2));
+   const leg2=-29*sig((q-.61)/.045);
+   const closeFade=-8*sig((q-.84)/.055);
+   const target=6512.4+morning+leg1+bounce+leg2+closeFade;
+   const vol=.075+.055*sig((q-.55)/.08)+.035*Math.exp(-Math.pow((q-.63)/.08,2));
+   noise=noise*.965+(rnd()-.5)*vol;
+   const micro=Math.sin(i/83)*.045+Math.sin(i/311)*.075;
+   p+=(target-p)*.018+noise+micro;
+   replay.spot[i]=p;
+   dayHi=Math.max(dayHi,p);dayLo=Math.min(dayLo,p);replay.dayHigh[i]=dayHi;replay.dayLow[i]=dayLo;
+   const theta=(SESSION_TICKS-i)/SESSION_TICKS,putIntrinsic=Math.max(0,6485-p),callIntrinsic=Math.max(0,p-6485);
+   const fear=1+1.35*sig((6483-p)/5.5)+.35*sig((q-.60)/.05);
+   const downMove=Math.max(0,6512.4-p);
+   const ripPhase=sig((q-.69)/.04);
+   const deltaFollow=downMove*.105+putIntrinsic*.205;
+   const barcode=(1-ripPhase)*(Math.floor(Math.max(0,6500-p)/1.45)*.11+Math.max(0,Math.sin(i/96))*.18+Math.max(0,Math.sin(i/31))*.04);
+   const ripBoost=ripPhase*(putIntrinsic*.19*fear+Math.max(0,6479-p)*.07+Math.max(0,downMove-33)*.045);
+   replay.put[i]=Math.max(.05,1.1+theta*4.45+deltaFollow+barcode+ripBoost+Math.sin(i/47)*.045);
+   replay.call[i]=Math.max(.05,.55+theta*4.9+callIntrinsic*.18/Math.max(1,fear)+Math.sin(i/59)*.06);
+   replay.activity[i]=-.15-q*.65+Math.sin(i/470)*.12+Math.sin(i/113)*.06-(6512.4-p)*.015;
+ }
+ const cache=(series,out)=>{for(let b=0;b<BARS;b++){const s=b*BAR_TICKS,e=s+BAR_TICKS-1;let o=series[s],h=o,l=o,c=o;for(let k=s;k<=e;k++){c=series[k];h=Math.max(h,c);l=Math.min(l,c);}out.push({o,h,l,c});}};
+ cache(replay.spot,replay.bars);cache(replay.call,replay.callBars);cache(replay.put,replay.putBars);
+ let dp=6368;
+ for(let i=0;i<120;i++){
+   const drift=.72+Math.sin(i*.17)*.28,shock=(rnd()-.5)*14,o=dp;
+   dp+=drift+shock;
+   const c=dp,h=Math.max(o,c)+2+rnd()*10,l=Math.min(o,c)-2-rnd()*10;
+   replay.daily.push({o,h,l,c});
+ }
+ const shift=6512.4-replay.daily[replay.daily.length-1].c;
+ for(const b of replay.daily){b.o+=shift;b.h+=shift;b.l+=shift;b.c+=shift;}
+ replay.generatedMs=performance.now()-t0;
+}
+// Keep the expensive 23,400-tick dummy replay build off the page's critical first-paint path.
+// It is prewarmed when the browser is idle, or synchronously on first visibility if needed.
+let replayReady=false;
+function ensureReplayReady(){
+ if(replayReady)return;
+ buildReplay();
+ const initialOptionStrike=Math.round(replay.spot[replay.tick]/5)*5;
+ selectedSideStrike.CALL=initialOptionStrike;
+ selectedSideStrike.PUT=initialOptionStrike;
+ replayReady=true;
+}
+function partialBar(i,series){const s=Math.floor(i/BAR_TICKS)*BAR_TICKS;let o=series[s],h=o,l=o,c=o;for(let k=s;k<=i;k++){c=series[k];h=Math.max(h,c);l=Math.min(l,c);}return{o,h,l,c};}
+function barsAt(series){const cache=series===replay.spot?replay.bars:series===replay.call?replay.callBars:replay.putBars,b=Math.floor(replay.tick/BAR_TICKS);const out=cache.slice(0,b);out.push(partialBar(replay.tick,series));return out;}
+function dailyAt(){const out=replay.daily.slice(0,-1);out.push({o:replay.spot[0],h:replay.dayHigh[replay.tick],l:replay.dayLow[replay.tick],c:replay.spot[replay.tick]});return out;}
+function dailyLabel(barIndex,total){const d=new Date(Date.UTC(2026,7,19));d.setUTCDate(d.getUTCDate()-(total-1-barIndex));return `${String(d.getUTCMonth()+1).padStart(2,'0')}/${String(d.getUTCDate()).padStart(2,'0')}`;}
+
+function computeLayout(){
+ const contentTop=HEADER_H+GAP,navY=cssH-NAV_H,tabsY=navY-TABS_H;
+ const orderH=orderOpen?ORDER_OPEN_H:ORDER_CLOSED_H;
+ const chrome=orderH+PROGRESS_H+GAP*2,available=Math.max(220,tabsY-contentTop-chrome);
+ const topH=Math.max(165,Math.floor(available*.55)),secondaryH=Math.max(120,available-topH);
+ const g3=rect(0,contentTop,cssW,topH),progress=rect(0,g3.y+g3.h,cssW,PROGRESS_H),order=rect(0,progress.y+progress.h+GAP,cssW,orderH),secondary=rect(0,order.y+order.h+GAP,cssW,secondaryH);
+ const tabW=cssW/tabs.length,tabRects=tabs.map((_,i)=>rect(i*tabW,tabsY,tabW,TABS_H));
+ const oy=order.y,ox=6;
+ const orderToggle=rect(ox,oy+1,58,18),orderContract=rect(68,oy+1,104,18),qtyMinus=rect(176,oy+1,24,18),qtyPlus=rect(220,oy+1,24,18),orderType=rect(Math.max(248,cssW-50),oy+1,44,18);
+ // Execution actions are one right-aligned group. Widths preserve the 12px minimum
+ // font while leaving enough breathing room that labels never touch adjacent boxes.
+ const actionGap=6,enterW=68,exitW=62,exitAllW=84,actionsW=enterW+exitW+exitAllW+actionGap*2,actionsX=Math.max(6,cssW-6-actionsW);
+ const orderEnter=rect(actionsX,oy+42,enterW,22),orderExit=rect(actionsX+enterW+actionGap,oy+42,exitW,22),orderExitAll=rect(actionsX+enterW+actionGap+exitW+actionGap,oy+42,exitAllW,22);
+ const g3View=rect(Math.max(8,g3.x+g3.w-36),g3.y+3,28,19);
+ const secondaryView=rect(Math.max(8,secondary.x+secondary.w-36),secondary.y+3,28,19);
+ return{header:rect(0,0,cssW,HEADER_H),g3,g3View,progress,order,secondary,secondaryView,tabs:rect(0,tabsY,cssW,TABS_H),tabRects,nav:rect(0,navY,cssW,NAV_H),play:rect(Math.max(0,cssW-70),30,24,22),rate:rect(Math.max(0,cssW-42),30,38,22),orderToggle,orderContract,qtyMinus,qtyPlus,orderType,orderEnter,orderExit,orderExitAll};
+}
+function relayout(){layout=computeLayout();staticDirty=true;resetCrosshair('');}
+function resize(){const r=canvas.getBoundingClientRect();const nw=Math.max(1,r.width),nh=Math.max(1,r.height);dpr=Math.min(window.devicePixelRatio||1,2);const pw=Math.round(nw*dpr),ph=Math.round(nh*dpr);if(nw!==cssW||nh!==cssH||canvas.width!==pw||canvas.height!==ph){cssW=nw;cssH=nh;canvas.width=pw;canvas.height=ph;gl.viewport(0,0,pw,ph);layout=computeLayout();staticDirty=true;}}
+new ResizeObserver(resize).observe(canvas);resize();
+
+function panelStatic(r,title){quad(ss,r.x,r.y,r.x+r.w,r.y+r.h,C.body);strokeRect(ss,r,C.border,.7);text(ts,title,r.x+7,r.y+5,.79,C.text);const cr=rect(r.x+7,r.y+25,Math.max(1,r.w-53),Math.max(1,r.h-43));quad(ss,cr.x,cr.y,cr.x+cr.w,cr.y+cr.h,C.deep);for(let i=1;i<5;i++){const y=cr.y+cr.h*i/5;quad(ss,cr.x,y,cr.x+cr.w,y+.5,C.grid);}for(let i=1;i<5;i++){const x=cr.x+cr.w*i/5;quad(ss,x,cr.y,x+.4,cr.y+cr.h,C.grid);}}
+function buildStatic(){ss.clear();ts.clear();quad(ss,0,0,cssW,cssH,C.bg);
+ // Header
+ quad(ss,0,0,cssW,HEADER_H,C.deep);quad(ss,0,HEADER_H-1,cssW,HEADER_H,C.border);
+ text(ts,'SPX',8,6,.78,C.soft);text(ts,'LIVE',cssW-112,6,.75,C.call);
+ text(ts,'VIX 15.8   RVOL 1.14',8,31,.72,C.soft);text(ts,'2026-08-19',158,31,.70,C.muted);
+ strokeRect(ss,layout.play,C.border,.7);strokeRect(ss,layout.rate,C.border,.7);
+ // Main panels
+ panelStatic(layout.g3,'G3  SPX 5 MIN');
+ // View-mode toggle: same chart/replay state, only the number of visible candles changes.
+ strokeRect(ss,layout.g3View,g3ViewBars===24?C.gold:C.border,.75);
+ textInRect(ts,'[]',layout.g3View,.72,g3ViewBars===24?C.gold:C.soft);
+ // Thin replay/session locator: orientation only; G3 remains the scrubber.
+ quad(ss,layout.progress.x,layout.progress.y,layout.progress.x+layout.progress.w,layout.progress.y+layout.progress.h,[35,31,25,255]);
+ // Execution strip shell is static. Only its live values are rebuilt per frame.
+ quad(ss,layout.order.x,layout.order.y,layout.order.x+layout.order.w,layout.order.y+layout.order.h,C.deep);strokeRect(ss,layout.order,C.border,.7);
+ text(ts,orderOpen?'ORDER -':'ORDER +',10,layout.order.y+3,.63,C.gold);
+ if(orderOpen){
+   strokeRect(ss,layout.orderContract,C.border,.6);strokeRect(ss,layout.qtyMinus,C.border,.6);strokeRect(ss,layout.qtyPlus,C.border,.6);strokeRect(ss,layout.orderType,C.border,.6);
+   strokeRect(ss,layout.orderEnter,C.call,.8);strokeRect(ss,layout.orderExit,C.put,.8);strokeRect(ss,layout.orderExitAll,C.border,.8);
+   textInRect(ts,'-',layout.qtyMinus,.72,C.soft);textInRect(ts,'+',layout.qtyPlus,.72,C.soft);
+   textInRect(ts,'ENTER',layout.orderEnter,.60,C.call);textInRect(ts,'EXIT',layout.orderExit,.60,C.put);textInRect(ts,'EXIT ALL',layout.orderExitAll,.58,C.text);
+ }
+ if(activeTab!=='CHAIN'){let title='G4  SPX DAILY';if(activeTab==='PUT')title=`G2  ${selectedSideStrike.PUT} PUT PREMIUM`;else if(activeTab==='CALL')title=`G1  ${selectedSideStrike.CALL} CALL PREMIUM`;panelStatic(layout.secondary,title);strokeRect(ss,layout.secondaryView,secondaryZoom24?C.gold:C.border,.75);textInRect(ts,'[]',layout.secondaryView,.72,secondaryZoom24?C.gold:C.soft);}else{quad(ss,layout.secondary.x,layout.secondary.y,layout.secondary.x+layout.secondary.w,layout.secondary.y+layout.secondary.h,C.body);strokeRect(ss,layout.secondary,C.border,.7);text(ts,'OPTION CHAIN',7,layout.secondary.y+5,.79,C.text);const hh=43,y=layout.secondary.y+25,widths=[.23,.18,.18,.18,.23],labels=['CALL %','LAST','STRIKE','LAST','PUT %'];let x=0;for(let i=0;i<5;i++){const w=cssW*widths[i];quad(ss,x,y,x+w,y+hh-25,C.deep);textCentered(ts,labels[i],x+w*.5,y+3,.66,i<2?C.call:i>2?C.put:C.gold);x+=w;}}
+ // tabs
+ quad(ss,0,layout.tabs.y,cssW,layout.tabs.y+layout.tabs.h,C.deep);quad(ss,0,layout.tabs.y,cssW,layout.tabs.y+1,C.border);for(let i=0;i<tabs.length;i++){const r=layout.tabRects[i],active=tabs[i]===activeTab;if(active)quad(ss,r.x+4,r.y+TABS_H-3,r.x+r.w-4,r.y+TABS_H-1,C.gold);textCentered(ts,tabs[i],r.x+r.w*.5,r.y+11,.74,active?C.gold:C.soft);}
+ // nav
+ quad(ss,0,layout.nav.y,cssW,cssH,C.deep);quad(ss,0,layout.nav.y,cssW,layout.nav.y+1,C.border);const n=['HOME','ACCOUNT','MORE'];for(let i=0;i<3;i++)textCentered(ts,n[i],cssW*(i+.5)/3,layout.nav.y+14,.74,i===0?C.gold:C.soft);
+ upload(gss,ss,gl.STATIC_DRAW);upload(gts,ts,gl.STATIC_DRAW);staticDirty=false;}
+
+function rightAxisBox(value,y,cr,color=C.text,scale=.67){
+ const h=18,pad=8,w=Math.max(46,textWidth(value,scale)+pad),x=clamp(cr.x+cr.w+1,0,Math.max(0,cssW-w)),yy=clamp(y-h*.5,cr.y,cr.y+cr.h-h),bg=[5,5,4,242],border=[232,218,187,96];
+ quad(sd,x,yy,x+w,yy+h,bg);strokeRect(sd,rect(x,yy,w,h),border,.6);textInRect(td,value,rect(x,yy,w,h),scale,color);
+ return rect(x,yy,w,h);
+}
+function drawCandles(r,bars,maxBars=48,priceColor=C.gold){const cr=rect(r.x+7,r.y+25,Math.max(1,r.w-53),Math.max(1,r.h-43)),start=Math.max(0,bars.length-maxBars),show=bars.slice(start);if(!show.length)return;let lo=Infinity,hi=-Infinity;for(const c of show){lo=Math.min(lo,c.l);hi=Math.max(hi,c.h);}if(!(hi>lo))hi=lo+1;const pad=(hi-lo)*.08;lo-=pad;hi+=pad;const yp=v=>cr.y+cr.h-(v-lo)/(hi-lo)*cr.h,step=cr.w/Math.max(maxBars,show.length),bw=Math.max(1.1,step*.55);let x=cr.x+step*.5;for(const c of show){const up=c.c>=c.o,col=up?C.call:C.put;lineQuad(sd,x,yp(c.h),x,yp(c.l),1,col);let y0=yp(c.o),y1=yp(c.c);if(Math.abs(y1-y0)<1)y1=y0+(up?1:-1);quad(sd,x-bw*.5,Math.min(y0,y1),x+bw*.5,Math.max(y0,y1),col);x+=step;}const last=show[show.length-1].c,ly=yp(last);quad(sd,cr.x,ly,cr.x+cr.w,ly+.65,priceColor);rightAxisBox(fmt2(last),ly,cr,priceColor,.67);const hiText=fmt2(hi),loText=fmt2(lo),axisX=clamp(cr.x+cr.w+3,0,cssW-Math.max(textWidth(hiText,.63),textWidth(loText,.63)));text(td,hiText,axisX,cr.y-1,.63,C.muted);text(td,loText,axisX,cr.y+cr.h-glyph.cellH*effectiveTextScale(.63),.63,C.muted);return{cr,yp,lo,hi,step,start,show};}
+function resetCrosshair(panel=''){crosshair.active=false;crosshair.panel=panel;crosshair.x=0;crosshair.y=0;}
+function valueAtY(m,y){const f=clamp((y-m.cr.y)/Math.max(1,m.cr.h),0,1);return m.hi-f*(m.hi-m.lo);}
+function drawOHLCReadout(r,bar){
+ if(!bar)return;
+ const value=`O ${fmt2(bar.o)}  H ${fmt2(bar.h)}  L ${fmt2(bar.l)}  C ${fmt2(bar.c)}`;
+ const scale=.56,w=textWidth(value,scale),x=Math.max(r.x+92,r.x+r.w-w-8);
+ text(td,value,x,r.y+5,scale,C.muted);
+}
+function drawChartCrosshair(m,panelKey,labelForBar,r){
+ if(!m||!crosshair.active||crosshair.panel!==panelKey)return;
+ const x=clamp(crosshair.x,m.cr.x,m.cr.x+m.cr.w),y=clamp(crosshair.y,m.cr.y,m.cr.y+m.cr.h);
+ const local=clamp(Math.floor((x-m.cr.x)/Math.max(.0001,m.step)),0,m.show.length-1),bar=m.show[local],barIndex=m.start+local;
+ const guide=[232,218,187,168],labelBg=[5,5,4,242],labelBorder=[232,218,187,118];
+ // Keep the cursor crosshair unambiguous on the phone: a true 1 px guide in both axes.
+ quad(sd,x-.5,m.cr.y,x+.5,m.cr.y+m.cr.h,guide);
+ quad(sd,m.cr.x,y-.5,m.cr.x+m.cr.w,y+.5,guide);
+ const axisValue=fmt2(valueAtY(m,y)),py=clamp(y-9,m.cr.y,m.cr.y+m.cr.h-18),pw=Math.max(46,textWidth(axisValue,.67)+10),px=clamp(m.cr.x+m.cr.w+1,0,Math.max(0,cssW-pw)),yBox=rect(px,py,pw,18);
+ quad(sd,yBox.x,yBox.y,yBox.x+yBox.w,yBox.y+yBox.h,labelBg);strokeRect(sd,yBox,labelBorder,.65);textInRect(td,axisValue,yBox,.67,C.text);
+ const tm=labelForBar(barIndex,m),tw=Math.max(48,textWidth(tm,.65)+10),tx=clamp(x-tw*.5,0,Math.max(0,cssW-tw)),ty=clamp(m.cr.y+m.cr.h-18,r.y,r.y+r.h-18),xBox=rect(tx,ty,tw,18);
+ quad(sd,xBox.x,xBox.y,xBox.x+xBox.w,xBox.y+xBox.h,labelBg);strokeRect(sd,xBox,labelBorder,.65);textInRect(td,tm,xBox,.65,C.text);
+ drawOHLCReadout(r,bar);
+}
+function intradayBarLabel(barIndex){const sec=9*3600+30*60+barIndex*BAR_TICKS,hh=Math.floor(sec/3600),mm=Math.floor((sec%3600)/60);return`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;}
+function drawG3(){const bars=barsAt(replay.spot),m=drawCandles(layout.g3,bars,g3ViewBars===24?24:BARS,C.gold);if(!m)return;const open=replay.spot[0];for(const d of [3.5,7,12,-3.5,-7,-12]){const y=m.yp(open+d);if(y>=m.cr.y&&y<=m.cr.y+m.cr.h)quad(sd,m.cr.x,y,m.cr.x+m.cr.w,y+.45,[C.blue[0],C.blue[1],C.blue[2],26]);}
+ drawChartCrosshair(m,'g3',intradayBarLabel,layout.g3);
+ const last=replay.spot[replay.tick],pct=(last/replay.spot[0]-1)*100;text(td,`SPX ${fmt2(last)}  ${fmtPct(pct)}`,8,layout.g3.y+layout.g3.h-17,.68,pct>=0?C.pos:C.neg);}
+function drawSecondaryChart(){let m=null;if(activeTab==='DAILY'){const bars=dailyAt();m=drawCandles(layout.secondary,bars,secondaryZoom24?24:58,C.gold);drawChartCrosshair(m,'secondary',(barIndex,meta)=>dailyLabel(barIndex,meta.show.length+meta.start),layout.secondary);}else if(activeTab==='PUT'){const strike=selectedSideStrike.PUT,bundle=getOptionSeries(strike,'PUT');{const bars=optionBarsAt(bundle);m=drawCandles(layout.secondary,bars,secondaryZoom24?24:BARS,C.put);}drawChartCrosshair(m,'secondary',intradayBarLabel,layout.secondary);}else if(activeTab==='CALL'){const strike=selectedSideStrike.CALL,bundle=getOptionSeries(strike,'CALL');{const bars=optionBarsAt(bundle);m=drawCandles(layout.secondary,bars,secondaryZoom24?24:BARS,C.call);}drawChartCrosshair(m,'secondary',intradayBarLabel,layout.secondary);}}
+let optionCtxTick=-1,optionCtx=null;
+function optionContext(tick=replay.tick){
+ if(tick===optionCtxTick&&optionCtx)return optionCtx;
+ const spot=replay.spot[tick],q=tick/(SESSION_TICKS-1),time=Math.max(.015,1-q),sqrtT=Math.sqrt(time),downMove=Math.max(0,replay.spot[0]-spot);
+ optionCtxTick=tick;
+ // Credible 0DTE SPX-style dummy surface: intrinsic is 1:1 in index points,
+ // ATM time value compresses into the close, and downside puts carry a modest skew premium.
+ optionCtx={spot,atmExtrinsic:1.25+15.5*sqrtT,distanceScale:12+23*sqrtT,wingDenom:55+35*sqrtT,putSkew:1+Math.min(.38,downMove/150),callSkew:1-Math.min(.18,downMove/240),microTick:tick/37};
+ return optionCtx;
+}
+function optionTick(p){return Math.max(.05,Math.round(p/.05)*.05);}
+function optionPriceFromContext(strike,side,c){
+ const dist=strike-c.spot,intrinsic=Math.max(0,side==='CALL'?-dist:dist),otm=Math.max(0,side==='CALL'?dist:-dist);
+ const decay=Math.exp(-otm/Math.max(5,c.distanceScale)-Math.abs(dist)/c.wingDenom),skew=side==='PUT'?c.putSkew:c.callSkew,micro=.08*Math.sin(c.microTick+(strike%25)*.13);
+ return optionTick(intrinsic+c.atmExtrinsic*decay*skew+micro);
+}
+function optionPriceAt(strike,side,tick=replay.tick){return optionPriceFromContext(strike,side,optionContext(tick));}
+function optionBidAt(strike,side,tick=replay.tick){const p=optionPriceAt(strike,side,tick),spread=optionTick(Math.max(.05,Math.min(.50,p*.025)));return optionTick(Math.max(.05,p-spread));}
+function buildOptionBars(series){const out=[];for(let b=0;b<BARS;b++){const s=b*BAR_TICKS,e=s+BAR_TICKS-1;let o=series[s],h=o,l=o,c=o;for(let k=s;k<=e;k++){c=series[k];h=Math.max(h,c);l=Math.min(l,c);}out.push({o,h,l,c});}return out;}
+function getOptionSeries(strike,side){
+ const key=`${side}:${strike}`;if(optionSeriesCache.has(key))return optionSeriesCache.get(key);
+ const series=new Float32Array(SESSION_TICKS);for(let i=0;i<SESSION_TICKS;i++)series[i]=optionPriceAt(strike,side,i);
+ const bundle={strike,side,series,bars:buildOptionBars(series)};optionSeriesCache.set(key,bundle);
+ if(optionSeriesCache.size>OPTION_SERIES_CACHE_MAX){const oldest=optionSeriesCache.keys().next().value;optionSeriesCache.delete(oldest);}
+ return bundle;
+}
+function optionBarsAt(bundle){const b=Math.floor(replay.tick/BAR_TICKS),out=bundle.bars.slice(0,b);out.push(partialBar(replay.tick,bundle.series));return out;}
+function selectedLastPremium(){if(orderState.strike==null||!orderState.legs.length)return 0;return orderState.legs.reduce((sum,leg)=>sum+optionPriceAt(orderState.strike,leg),0);}
+function selectedBidPremium(){if(orderState.strike==null||!orderState.legs.length)return 0;return orderState.legs.reduce((sum,leg)=>sum+optionBidAt(orderState.strike,leg),0);}
+function selectedPremium(){return orderState.orderType==='BID'?selectedBidPremium():selectedLastPremium();}
+function selectedValue(){return selectedPremium()*100*orderState.qty;}
+function openValue(){let total=0;for(const p of orderState.positions)for(const leg of p.legs)total+=optionPriceAt(p.strike,leg)*100*p.qty;return total;}
+function selectContract(strike,legs){orderState.strike=strike;orderState.legs=[...legs];if(legs.includes('CALL'))selectedSideStrike.CALL=strike;if(legs.includes('PUT'))selectedSideStrike.PUT=strike;staticDirty=true;if(!orderOpen){orderOpen=true;relayout();}}
+function enterSelection(){if(orderState.strike==null||!orderState.legs.length)return;orderState.positions.push({strike:orderState.strike,legs:[...orderState.legs],qty:orderState.qty,entry:selectedPremium(),tick:replay.tick});}
+function exitSelection(){if(orderState.strike==null)return;for(let i=orderState.positions.length-1;i>=0;i--)if(orderState.positions[i].strike===orderState.strike)orderState.positions.splice(i,1);}
+function chainGeometry(){const r=layout.secondary,headerY=r.y+43,rowH=22,visible=Math.max(1,Math.floor((r.h-43)/rowH)),spot=replay.spot[replay.tick],center=Math.round(spot/5)*5,start=center-Math.floor(visible/2)*5,widths=[.23,.18,.18,.18,.23],col=[0];for(const w of widths)col.push(col[col.length-1]+cssW*w);return{r,headerY,rowH,visible,spot,center,start,widths,col};}
+function chainHitAt(p){if(activeTab!=='CHAIN'||!inside(p,layout.secondary))return null;const g=chainGeometry();if(p.y<g.headerY)return null;const row=Math.floor((p.y-g.headerY)/g.rowH);if(row<0||row>=g.visible)return null;let column=-1;for(let i=0;i<5;i++)if(p.x>=g.col[i]&&p.x<=g.col[i+1]){column=i;break;}if(column<0)return null;return{strike:g.start+row*5,column,row};}
+function drawChain(){const g=chainGeometry(),{r,headerY,rowH,visible,spot,center,start,col}=g;const ub=partialBar(replay.tick,replay.spot),prevTick=Math.max(0,replay.tick-BAR_TICKS),ctxNow=optionContext(replay.tick),ctxPrev=optionContext(prevTick);drawOHLCReadout(r,ub);for(let i=0;i<visible;i++){const strike=start+i*5,y0=headerY+i*rowH,y1=Math.min(r.y+r.h,y0+rowH),callItm=strike<spot,putItm=strike>spot,call=optionPriceFromContext(strike,'CALL',ctxNow),put=optionPriceFromContext(strike,'PUT',ctxNow),callPrev=optionPriceFromContext(strike,'CALL',ctxPrev),putPrev=optionPriceFromContext(strike,'PUT',ctxPrev),cp=clamp((call/callPrev-1)*100,-99,99),pp=clamp((put/putPrev-1)*100,-99,99);if((i&1)===0)quad(sd,0,y0,cssW,y1,[18,20,22,150]);if(callItm)quad(sd,col[0],y0,col[2],y1,C.itmCall);if(putItm)quad(sd,col[3],y0,col[5],y1,C.itmPut);if(Math.abs(strike-center)<2.5)quad(sd,col[2],y0,col[3],y1,C.sel);if(orderState.strike===strike){quad(sd,0,y0,cssW,y1,[242,214,148,18]);if(orderState.legs.includes('CALL'))quad(sd,col[0],y0,col[2],y1,[73,112,75,38]);if(orderState.legs.includes('PUT'))quad(sd,col[3],y0,col[5],y1,[151,65,48,38]);}const cy=y0+4;textCentered(td,(cp>=0?'+':'')+cp.toFixed(0)+'%',(col[0]+col[1])*.5,cy,.65,cp>=0?C.pos:C.neg);textCentered(td,fmt2(call),(col[1]+col[2])*.5,cy,.65,C.soft);textCentered(td,(strike===center?'C ':'')+strike,(col[2]+col[3])*.5,cy,.66,strike===center?C.gold:C.text);textCentered(td,fmt2(put),(col[3]+col[4])*.5,cy,.65,C.soft);textCentered(td,(pp>=0?'+':'')+pp.toFixed(0)+'%',(col[4]+col[5])*.5,cy,.65,pp>=0?C.pos:C.neg);}}
+function drawOrderStrip(){const r=layout.order;if(!orderOpen){const px=orderState.strike==null?'':` PX ${fmt2(selectedLastPremium())}`,summary=orderState.strike==null?`${orderState.positions.length} POS`: `${orderState.strike} ${orderState.legs.length===2?'C+P':orderState.legs[0]==='CALL'?'C':'P'} Q${orderState.qty}${px} ${orderState.positions.length} POS`;text(td,summary,82,r.y+3,.60,orderState.strike==null?C.muted:C.soft);return;}const contract=orderState.strike==null?'NO CONTRACT':`${orderState.strike} ${orderState.legs.length===2?'C+P':orderState.legs[0]==='CALL'?'CALL':'PUT'}`;textInRect(td,contract,layout.orderContract,.59,orderState.strike==null?C.muted:C.text);textCentered(td,String(orderState.qty),(layout.qtyMinus.x+layout.qtyPlus.x+layout.qtyPlus.w)*.5,r.y+3,.63,C.text);textInRect(td,orderState.orderType,layout.orderType,.59,orderState.orderType==='MKT'?C.gold:C.soft);if(orderState.orderType==='MKT')quad(sd,layout.orderType.x+4,layout.orderType.y+layout.orderType.h-2,layout.orderType.x+layout.orderType.w-4,layout.orderType.y+layout.orderType.h,C.gold);const lastPx=orderState.strike==null?0:selectedLastPremium(),bidPx=orderState.strike==null?0:selectedBidPremium(),val=orderState.strike==null?0:selectedValue(),openVal=orderState.positions.length?openValue():0;text(td,`LAST ${fmt2(lastPx)}  BID ${fmt2(bidPx)}  VALUE ${fmtMoney(val)}`,8,r.y+26,.56,C.soft);text(td,`OPEN ${fmtMoney(openVal)}  ${orderState.positions.length} POS`,8,r.y+47,.56,orderState.positions.length?C.gold:C.muted);}
+function drawSessionProgress(){const r=layout.progress,progress=replay.tick/(SESSION_TICKS-1),x=r.x+r.w*progress;quad(sd,r.x,r.y,x,r.y+r.h,C.slider);quad(sd,Math.max(r.x,x-1),r.y-1,Math.min(r.x+r.w,x+1),r.y+r.h+1,C.gold);}
+function clockText(tick){const sec=9*3600+30*60+tick,h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
+
+// Keep phone chrome cheap: progress is two dynamic quads; execution geometry/text that never changes lives in the static buffers.
+const SAMPLE_CAP=1200,prof={frame:[],raf:[],build:[],upload:[],draw:[],frames:0,total:0,lastFpsT:performance.now(),fps:0,p50:0,p99:0,seek:0};
+function push(a,v){if(!Number.isFinite(v))return;a.push(v);if(a.length>SAMPLE_CAP)a.shift();}
+function stats(a){if(!a.length)return{n:0,avg:0,p50:0,p90:0,p95:0,p99:0,max:0};const x=[...a].sort((a,b)=>a-b),sum=a.reduce((q,v)=>q+v,0),p=v=>x[Math.min(x.length-1,Math.floor((x.length-1)*v))];return{n:a.length,avg:sum/a.length,p50:p(.5),p90:p(.9),p95:p(.95),p99:p(.99),max:x[x.length-1]};}
+function buildDynamic(){const t0=performance.now();sd.clear();td.clear();
+ const spotNow=replay.spot[replay.tick],spotPct=(spotNow/replay.spot[0]-1)*100;
+ text(td,fmt2(spotNow),36,5,.90,C.text);text(td,fmtPct(spotPct),114,6,.76,spotPct>=0?C.pos:C.neg);
+ textCentered(td,replay.playing?'||':'>',layout.play.x+layout.play.w*.5,layout.play.y+3,.78,C.text);textCentered(td,replay.rate+'x',layout.rate.x+layout.rate.w*.5,layout.rate.y+3,.70,C.soft);
+ drawG3();drawSessionProgress();drawOrderStrip();if(activeTab==='CHAIN')drawChain();else drawSecondaryChart();
+ const now=clockText(replay.tick);text(td,now,cssW-70,layout.g3.y+layout.g3.h-17,.64,C.muted);
+ profBuild=performance.now()-t0;push(prof.build,profBuild);}
+let profBuild=0,last=performance.now();
+function advance(dt){if(!replay.playing)return;const inc=Math.max(1,Math.floor(dt/1000*replay.rate*60));replay.tick=(replay.tick+inc)%SESSION_TICKS;}
+let renderVisible=false,rafId=0;
+function render(now){
+ const frame0=performance.now(),raw=now-last,dt=Math.min(raw,100);
+ if(last>0&&raw>0)push(prof.raf,raw);last=now;resize();advance(dt);
+ if(staticDirty)buildStatic();buildDynamic();
+ const u0=performance.now();upload(gsd,sd,gl.DYNAMIC_DRAW);upload(gtd,td,gl.DYNAMIC_DRAW);push(prof.upload,performance.now()-u0);
+ gl.disable(gl.DEPTH_TEST);gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+ gl.clearColor(C.bg[0]/255,C.bg[1]/255,C.bg[2]/255,1);gl.clear(gl.COLOR_BUFFER_BIT);
+ const d0=performance.now();drawSolid(gss);drawSolid(gsd);drawText(gts);drawText(gtd);push(prof.draw,performance.now()-d0);
+ const fm=performance.now()-frame0;push(prof.frame,fm);prof.frames++;prof.total++;
+ if(now-prof.lastFpsT>500){prof.fps=prof.frames*1000/(now-prof.lastFpsT);const s=stats(prof.frame);prof.p50=s.p50;prof.p99=s.p99;prof.frames=0;prof.lastFpsT=now;}
+ if(renderVisible)rafId=requestAnimationFrame(render);else rafId=0;
+}
+
+function pointerPos(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+// Phone ergonomics: keep the visual geometry unchanged, but make compact controls easier to tap.
+function touchHit(p,r,padX=0,padY=0){return p.x>=r.x-padX&&p.x<=r.x+r.w+padX&&p.y>=r.y-padY&&p.y<=r.y+r.h+padY;}
+function plotRect(r){return rect(r.x+7,r.y+25,Math.max(1,r.w-53),Math.max(1,r.h-43));}
+function hoverPanelAt(p){if(inside(p,plotRect(layout.g3)))return'g3';if(activeTab!=='CHAIN'&&inside(p,plotRect(layout.secondary)))return'secondary';return'';}
+function updateMouseCrosshair(p){const panel=hoverPanelAt(p);if(!panel){resetCrosshair('');canvas.style.cursor='default';return;}crosshair.active=true;crosshair.panel=panel;crosshair.x=p.x;crosshair.y=p.y;canvas.style.cursor='crosshair';}
+let gesture=null;
+function seekFromPoint(p){const f=clamp((p.x-8)/Math.max(1,cssW-61),0,1);replay.tick=Math.round(f*(SESSION_TICKS-1));prof.seek++;}
+canvas.addEventListener('pointerdown',e=>{
+ const p=pointerPos(e);
+ if(touchHit(p,layout.g3View,5,7)){g3ViewBars=g3ViewBars===24?0:24;staticDirty=true;resetCrosshair('');return;}
+ if(activeTab!=='CHAIN'&&touchHit(p,layout.secondaryView,5,7)){secondaryZoom24=!secondaryZoom24;staticDirty=true;resetCrosshair('');return;}
+ if(touchHit(p,layout.play,0,8)){replay.playing=!replay.playing;return;}
+ if(touchHit(p,layout.rate,0,8)){const rates=[1,2,5,10,20];replay.rate=rates[(rates.indexOf(replay.rate)+1)%rates.length];return;}
+ if(touchHit(p,layout.orderToggle,4,7)){orderOpen=!orderOpen;relayout();return;}
+ if(orderOpen){
+   if(touchHit(p,layout.qtyMinus,8,8)){orderState.qty=Math.max(1,orderState.qty-1);return;}
+   if(touchHit(p,layout.qtyPlus,8,8)){orderState.qty=Math.min(99,orderState.qty+1);return;}
+   if(touchHit(p,layout.orderType,4,8)){orderState.orderType=orderState.orderType==='MKT'?'BID':'MKT';return;}
+   if(touchHit(p,layout.orderEnter,2,8)){enterSelection();return;}
+   if(touchHit(p,layout.orderExit,2,8)){exitSelection();return;}
+   if(touchHit(p,layout.orderExitAll,2,8)){orderState.positions.length=0;return;}
+ }
+ const hit=chainHitAt(p);
+ if(hit){
+   // CALL LAST (and CALL %) selects the call; PUT LAST (and PUT %) selects the put.
+   // The strike cell selects the same-strike straddle.
+   if(hit.column===0||hit.column===1)selectContract(hit.strike,['CALL']);
+   else if(hit.column===3||hit.column===4)selectContract(hit.strike,['PUT']);
+   else selectContract(hit.strike,['CALL','PUT']);
+   return;
+ }
+ for(let i=0;i<tabs.length;i++){if(inside(p,layout.tabRects[i])){activeTab=tabs[i];staticDirty=true;resetCrosshair('');canvas.style.cursor='default';return;}}
+ // Bottom PHONE navigation only: ACCOUNT is embedded inside the phone frame.
+ if(inside(p,layout.nav)){
+   const navIndex=Math.min(2,Math.max(0,Math.floor(p.x/(cssW/3))));
+   if(navIndex===1){
+     openPhoneAccount();
+     return;
+   }
+ }
+ if(e.pointerType==='mouse')updateMouseCrosshair(p);
+ else {
+   const panel=hoverPanelAt(p);
+   if(panel){crosshair.active=true;crosshair.panel=panel;crosshair.x=p.x;crosshair.y=p.y;}
+ }
+ if(inside(p,layout.g3)){
+   gesture={id:e.pointerId,x:p.x,y:p.y,axis:e.pointerType==='mouse'?'x':null};
+   if(gesture.axis==='x'){dragging=true;canvas.setPointerCapture(e.pointerId);seekFromPoint(p);}
+ }
+});
+canvas.addEventListener('pointermove',e=>{
+ const p=pointerPos(e);
+ if(e.pointerType==='mouse')updateMouseCrosshair(p);
+ if(!gesture||gesture.id!==e.pointerId)return;
+ const dx=p.x-gesture.x,dy=p.y-gesture.y;
+ if(!gesture.axis&&Math.max(Math.abs(dx),Math.abs(dy))>=7){
+   if(Math.abs(dy)>Math.abs(dx)){gesture.axis='y';dragging=false;return;}
+   gesture.axis='x';dragging=true;try{canvas.setPointerCapture(e.pointerId);}catch{}
+ }
+ if(dragging&&gesture.axis==='x'){crosshair.active=true;crosshair.panel='g3';crosshair.x=p.x;crosshair.y=p.y;seekFromPoint(p);}
+});
+function finishPointer(e){if(gesture&&gesture.id===e.pointerId)gesture=null;dragging=false;try{canvas.releasePointerCapture(e.pointerId);}catch{}}
+canvas.addEventListener('pointerup',finishPointer);
+canvas.addEventListener('pointercancel',finishPointer);
+canvas.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'){resetCrosshair('');canvas.style.cursor='default';}});
+
+let glyphReady=false;
+function ensurePhoneReady(){
+ ensureReplayReady();
+ if(!glyphReady){makeGlyphAtlas();glyphReady=true;}
+}
+const visibilityObserver=new IntersectionObserver(entries=>{
+ const visible=entries.some(entry=>entry.isIntersecting);
+ if(visible===renderVisible)return;
+ renderVisible=visible;
+ if(renderVisible&&!rafId){ensurePhoneReady();last=performance.now();rafId=requestAnimationFrame(render);}
+},{rootMargin:'180px 0px'});
+visibilityObserver.observe(canvas);
+
+// Prewarm after the browser gets its first chance to paint the surrounding page.
+// If idle callbacks are unavailable, a short deferred task provides the same first-paint separation.
+if('requestIdleCallback' in window)requestIdleCallback(()=>ensurePhoneReady(),{timeout:1500});
+else setTimeout(()=>ensurePhoneReady(),250);
+
+
             })();
         </script>
     </body>

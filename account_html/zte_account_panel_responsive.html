@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>ZeroToExpire — Account</title>
+<style>
+:root{
+  --bg:#050504;--panel:#080806;--panel2:#0d0b08;--deep:#050504;
+  --line:#433a2c;--line2:#27221a;--grid:#373128;
+  --text:#e8dabb;--soft:#beb196;--muted:#8b806c;
+  --gold:#cfa453;--gold2:#f2d694;--green:#6f9569;--call:#49704b;
+  --red:#9e4230;--put:#974130;--amber:#d98c48;--sel:rgba(242,214,148,.13);
+  --itm-call:rgba(28,45,30,.86);--itm-put:rgba(53,27,23,.86);
+  --radius:5px;--gap:7px;--font:Consolas,"SFMono-Regular",Menlo,Monaco,monospace;
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:var(--font)}
+body{overflow-x:hidden}button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+.app{min-height:100vh;background:linear-gradient(180deg,#070603 0%,var(--bg) 24%);padding-bottom:58px}
+.topbar{min-height:54px;display:flex;align-items:center;gap:7px;padding:7px 8px;border-bottom:1px solid var(--line);background:rgba(5,5,4,.97);position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:7px;min-width:0;font-weight:800;letter-spacing:.55px;font-size:12px;white-space:nowrap}
+.logo{width:25px;height:25px;border:1px solid var(--gold);display:grid;place-items:center;color:var(--gold2);font-size:12px;background:#090806}
+.market-strip{display:flex;gap:5px;align-items:center;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1}.market-strip::-webkit-scrollbar{display:none}
+.chip{height:30px;padding:6px 8px;border:1px solid var(--line);background:var(--panel2);border-radius:3px;white-space:nowrap;font-size:12px;color:var(--soft)}
+.chip b{color:var(--text);font-weight:700}.good{color:var(--green)!important}.bad{color:var(--red)!important}.gold{color:var(--gold2)!important}
+.main{padding:8px 7px 12px;min-width:0}.section{display:none}.section.active{display:block}
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.page-title{font-size:16px;font-weight:800;letter-spacing:.15px}.page-sub{font-size:12px;color:var(--soft);margin-top:3px}
+.btn{height:34px;border:1px solid var(--line);background:var(--panel2);border-radius:3px;padding:0 10px;font-size:12px;color:var(--soft)}.btn:active,.btn.active{border-color:var(--gold);color:var(--gold2);background:var(--sel)}.btn.primary{border-color:var(--gold);color:var(--gold2)}
+.grid-kpis{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}.card{border:1px solid var(--line);background:var(--panel);border-radius:var(--radius);min-width:0;overflow:hidden}
+.card-h{min-height:34px;border-bottom:1px solid var(--line2);padding:8px 9px;font-size:12px;color:var(--soft);display:flex;align-items:center;justify-content:space-between;gap:8px}.card-b{padding:9px}.kpi{padding:9px}
+.kpi-label{font-size:12px;color:var(--soft);letter-spacing:.22px;margin-bottom:7px;line-height:1.2}.kpi-value{font-size:18px;line-height:1.05;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kpi-meta{font-size:12px;margin-top:7px;color:var(--muted);line-height:1.3}
+.stack{display:grid;gap:6px}.summary-table{width:100%;border-collapse:collapse;font-size:12px}.summary-table td{padding:8px 0;border-bottom:1px solid var(--line2)}.summary-table tr:last-child td{border-bottom:0}.summary-table td:first-child{color:var(--soft)}.summary-table td:last-child{text-align:right;color:var(--text);font-weight:700}
+.mini-bars{display:grid;gap:9px}.bar-row{display:grid;grid-template-columns:92px 1fr 54px;align-items:center;gap:7px;font-size:12px;color:var(--soft)}.bar{height:7px;background:var(--line2);overflow:hidden}.fill{height:100%;background:var(--gold)}.fill.green{background:var(--green)}.fill.red{background:var(--red)}
+.list{display:grid}.list-row{display:grid;grid-template-columns:68px 1fr auto;gap:7px;padding:8px 0;border-bottom:1px solid var(--line2);font-size:12px;align-items:center}.list-row:last-child{border-bottom:0}.time{color:var(--muted)}.desc{color:var(--soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.amt{font-weight:800}
+.table-wrap{overflow:auto;max-width:100%;-webkit-overflow-scrolling:touch}table.data{width:100%;border-collapse:collapse;min-width:680px;font-size:12px}table.data th{position:sticky;top:0;background:#0d0b08;color:var(--soft);font-weight:600;text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}table.data td{padding:10px 8px;border-bottom:1px solid var(--line2);white-space:nowrap}.symbol{color:var(--gold2);font-weight:800}.badge{display:inline-flex;align-items:center;height:23px;padding:0 7px;border:1px solid var(--line);font-size:11px;color:var(--soft)}
+.form-grid{display:grid;grid-template-columns:1fr;gap:8px}.field{display:grid;gap:5px}.field label{font-size:12px;color:var(--soft)}.field input,.field select{height:38px;background:#070603;border:1px solid var(--line);color:var(--text);padding:0 9px;border-radius:3px;outline:none;font-size:13px}.field input:focus,.field select:focus{border-color:var(--gold)}
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line2)}.switch-row:last-child{border-bottom:0}.switch-copy{min-width:0}.switch-title{font-size:13px;color:var(--text)}.switch-sub{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.3}.toggle{width:42px;height:24px;border-radius:999px;background:var(--line2);border:1px solid var(--line);position:relative;flex:0 0 auto}.toggle::after{content:"";position:absolute;width:16px;height:16px;top:3px;left:4px;border-radius:50%;background:var(--muted);transition:.14s}.toggle.on{background:#172117;border-color:#435b39}.toggle.on::after{left:20px;background:var(--green)}
+.mobile-tabs{height:56px;border-top:1px solid var(--line);background:#050504;position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom)}.mobile-tab{border:0;border-right:1px solid var(--line2);background:transparent;color:var(--soft);font-size:11px;letter-spacing:.15px}.mobile-tab:last-child{border-right:0}.mobile-tab.active{color:var(--gold2);background:var(--sel);box-shadow:inset 0 2px 0 var(--gold)}
+.more-tabs{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;margin-bottom:7px;padding-bottom:1px}.more-tabs::-webkit-scrollbar{display:none}.more-tab{height:34px;flex:0 0 auto;padding:0 10px;border:1px solid var(--line);background:var(--panel);color:var(--soft);font-size:12px}.more-tab.active{border-color:var(--gold);color:var(--gold2);background:var(--sel)}.more-panel{display:none}.more-panel.active{display:block}
+.symbol-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.symbol-choice{height:44px;border:1px solid var(--line);background:#070603;color:var(--soft);font-weight:800;font-size:13px}.symbol-choice.active{border-color:var(--gold);background:var(--sel);color:var(--gold2);box-shadow:inset 0 -2px 0 var(--gold)}
+.setting-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.metric-box{border:1px solid var(--line2);background:#070603;padding:9px;min-height:67px}.metric-box .label{font-size:11px;color:var(--muted);margin-bottom:7px}.metric-box .value{font-size:15px;font-weight:800}.note{font-size:12px;color:var(--muted);line-height:1.45;margin-top:8px}.section-gap{height:6px}.inline-actions{display:flex;gap:6px;flex-wrap:wrap}.danger{border-color:#6e3028;color:#d17a6d}.itm-call{background:var(--itm-call)}.itm-put{background:var(--itm-put)}
+@media (min-width:761px){.app{max-width:980px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line)}.main{padding:12px}.grid-kpis{grid-template-columns:repeat(4,1fr)}.overview-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:7px}.form-grid{grid-template-columns:1fr 1fr}.mobile-tabs{position:sticky}.setting-grid{grid-template-columns:repeat(4,1fr)}}
+@media (max-width:430px){.brand{font-size:12px}.chip{font-size:12px}.page-title{font-size:16px}.grid-kpis{gap:5px}.kpi-value{font-size:17px}.bar-row{grid-template-columns:86px 1fr 50px}.mobile-tab{font-size:10px}.main{padding-left:6px;padding-right:6px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">Z</div><span>ACCOUNT</span></div>
+    <div class="market-strip">
+      <div class="chip"><b id="headerSymbol">SPX</b> <span id="headerPrice">7706.48</span> <span class="bad" id="headerMove">-0.28%</span></div>
+      <div class="chip"><b>VIX</b> 14.91 <span class="bad">-2.7%</span></div>
+      <div class="chip"><b>RVOL</b> <span class="good">0.88</span></div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section id="overview" class="section active">
+      <div class="page-head"><div><div class="page-title">Account Overview</div><div class="page-sub">Dummy responsive account snapshot</div></div><button class="btn primary">REFRESH</button></div>
+      <div class="grid-kpis">
+        <div class="card kpi"><div class="kpi-label">NET LIQUIDATING</div><div class="kpi-value">$250,800</div><div class="kpi-meta">Prior $249,270</div></div>
+        <div class="card kpi"><div class="kpi-label">DAY P&amp;L</div><div class="kpi-value bad">-$312</div><div class="kpi-meta bad">-0.12% today</div></div>
+        <div class="card kpi"><div class="kpi-label">UNREALIZED</div><div class="kpi-value good">+$1,842</div><div class="kpi-meta good">+0.73% open</div></div>
+        <div class="card kpi"><div class="kpi-label">BUYING POWER</div><div class="kpi-value">$182,450</div><div class="kpi-meta">$114,100 cash</div></div>
+      </div>
+      <div class="overview-grid">
+        <div class="stack">
+          <div class="card"><div class="card-h"><span>Exposure &amp; Capital</span><span class="gold" id="overviewSymbol">SPX</span></div><div class="card-b mini-bars">
+            <div class="bar-row"><span>Options BP</span><div class="bar"><div class="fill" style="width:37%"></div></div><b>37%</b></div>
+            <div class="bar-row"><span>Exposure</span><div class="bar"><div class="fill green" style="width:26%"></div></div><b>$47.8K</b></div>
+            <div class="bar-row"><span>Net Delta</span><div class="bar"><div class="fill red" style="width:18%"></div></div><b>-0.18</b></div>
+            <div class="bar-row"><span>Cash Buffer</span><div class="bar"><div class="fill green" style="width:63%"></div></div><b>63%</b></div>
+          </div></div>
+          <div class="card"><div class="card-h"><span>Recent Activity</span><span>Today</span></div><div class="card-b list">
+            <div class="list-row"><span class="time">15:42</span><span class="desc">SELL 1 <span class="activitySymbol">SPXW</span> CALL @ 4.20</span><span class="amt good">+$420</span></div>
+            <div class="list-row"><span class="time">14:18</span><span class="desc">BUY 1 <span class="activitySymbol">SPXW</span> PUT @ 3.10</span><span class="amt bad">-$310</span></div>
+            <div class="list-row"><span class="time">13:07</span><span class="desc">Premium lift threshold</span><span class="amt gold">ALERT</span></div>
+          </div></div>
+        </div>
+        <div class="stack">
+          <div class="card"><div class="card-h"><span>Account Summary</span><span>••3821</span></div><div class="card-b"><table class="summary-table">
+            <tr><td>Cash &amp; Sweep</td><td>$114,100</td></tr><tr><td>Options BP</td><td>$182,450</td></tr><tr><td>Open Positions</td><td>3</td></tr><tr><td>Working Orders</td><td>1</td></tr><tr><td>Realized P&amp;L</td><td class="good">+$1,530</td></tr>
+          </table></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="positions" class="section">
+      <div class="page-head"><div><div class="page-title">Positions</div><div class="page-sub">Open risk and contract inventory</div></div><button class="btn primary">REFRESH</button></div>
+      <div class="card"><div class="card-h"><span>Open Positions</span><span>3</span></div><div class="table-wrap"><table class="data"><thead><tr><th>Symbol</th><th>Side</th><th>Qty</th><th>Avg</th><th>Mark</th><th>Value</th><th>Unrealized</th><th>Delta</th></tr></thead><tbody id="positionRows"></tbody></table></div></div>
+      <div class="section-gap"></div>
+      <div class="card"><div class="card-h"><span>Position Controls</span><span class="gold">DUMMY</span></div><div class="card-b">
+        <div class="switch-row"><div class="switch-copy"><div class="switch-title">Auto-select nearest expiry</div><div class="switch-sub">Prefer same-day expiry when available</div></div><div class="toggle on"></div></div>
+        <div class="switch-row"><div class="switch-copy"><div class="switch-title">Group legs by strategy</div><div class="switch-sub">Show straddles/spreads as one position group</div></div><div class="toggle on"></div></div>
+      </div></div>
+    </section>
+
+    <section id="orders" class="section">
+      <div class="page-head"><div><div class="page-title">Orders</div><div class="page-sub">Working and completed executions</div></div><button class="btn primary">NEW</button></div>
+      <div class="card"><div class="card-h"><span>Order Book</span><span class="badge">1 WORKING</span></div><div class="table-wrap"><table class="data"><thead><tr><th>Time</th><th>Symbol</th><th>Action</th><th>Qty</th><th>Type</th><th>Price</th><th>Status</th></tr></thead><tbody id="orderRows"></tbody></table></div></div>
+    </section>
+
+    <section id="settings" class="section">
+      <div class="page-head"><div><div class="page-title">Settings</div><div class="page-sub">Account and phone defaults</div></div><button class="btn primary">SAVE</button></div>
+      <div class="stack">
+        <div class="card"><div class="card-h"><span>Account Defaults</span><span>LOCAL</span></div><div class="card-b form-grid">
+          <div class="field"><label>DISPLAY NAME</label><input value="Francisco" /></div>
+          <div class="field"><label>TIME ZONE</label><select><option>America/New_York</option></select></div>
+          <div class="field"><label>DEFAULT VIEW</label><select><option>OA Surface</option><option>Account</option><option>GEX</option><option>Macro</option></select></div>
+          <div class="field"><label>DEFAULT QTY</label><input type="number" value="1" min="1" /></div>
+        </div></div>
+        <div class="card"><div class="card-h"><span>Notifications</span><span>ALERTS</span></div><div class="card-b">
+          <div class="switch-row"><div class="switch-copy"><div class="switch-title">Order updates</div><div class="switch-sub">Filled, rejected and canceled orders</div></div><div class="toggle on"></div></div>
+          <div class="switch-row"><div class="switch-copy"><div class="switch-title">Risk alerts</div><div class="switch-sub">Position limits and drawdown warnings</div></div><div class="toggle on"></div></div>
+          <div class="switch-row"><div class="switch-copy"><div class="switch-title">End-of-day summary</div><div class="switch-sub">Daily account recap</div></div><div class="toggle"></div></div>
+        </div></div>
+      </div>
+    </section>
+
+    <section id="more" class="section">
+      <div class="page-head"><div><div class="page-title">More</div><div class="page-sub">Market, position and execution controls</div></div></div>
+      <div class="more-tabs">
+        <button class="more-tab active" data-more="market">MARKET</button><button class="more-tab" data-more="position">POSITION</button><button class="more-tab" data-more="risk">RISK</button><button class="more-tab" data-more="execution">EXECUTION</button><button class="more-tab" data-more="alerts">ALERTS</button><button class="more-tab" data-more="display">DISPLAY</button><button class="more-tab" data-more="broker">BROKER</button>
+      </div>
+
+      <div id="more-market" class="more-panel active">
+        <div class="card"><div class="card-h"><span>Instrument / Market</span><span class="gold" id="marketSelected">SPX</span></div><div class="card-b">
+          <div class="symbol-picker">
+            <button class="symbol-choice active" data-symbol="SPX">SPX</button><button class="symbol-choice" data-symbol="SPY">SPY</button><button class="symbol-choice" data-symbol="QQQ">QQQ</button><button class="symbol-choice" data-symbol="/ES">/ES</button>
+          </div>
+          <div class="section-gap"></div>
+          <div class="setting-grid">
+            <div class="metric-box"><div class="label">PRODUCT</div><div class="value" id="productLabel">SPXW 0DTE</div></div>
+            <div class="metric-box"><div class="label">STRIKE STEP</div><div class="value" id="strikeStep">5.00</div></div>
+            <div class="metric-box"><div class="label">TICK</div><div class="value" id="tickSize">0.05</div></div>
+            <div class="metric-box"><div class="label">SESSION</div><div class="value" id="sessionLabel">09:30–16:00</div></div>
+          </div>
+          <div class="note">Dummy settings now; this selector is wired and persists locally so the eventual live surface can use the same interaction.</div>
+        </div></div>
+      </div>
+
+      <div id="more-position" class="more-panel">
+        <div class="card"><div class="card-h"><span>Position Settings</span><span class="gold">DEFAULTS</span></div><div class="card-b form-grid">
+          <div class="field"><label>DEFAULT CONTRACT QTY</label><input type="number" min="1" value="1" /></div>
+          <div class="field"><label>MAX OPEN CONTRACTS</label><input type="number" min="1" value="6" /></div>
+          <div class="field"><label>DEFAULT ENTRY</label><select><option>Market</option><option>Bid</option><option>Mid</option><option>Limit</option></select></div>
+          <div class="field"><label>POSITION GROUPING</label><select><option>By strategy</option><option>By contract</option><option>By symbol</option></select></div>
+        </div></div>
+        <div class="section-gap"></div>
+        <div class="card"><div class="card-b">
+          <div class="switch-row"><div class="switch-copy"><div class="switch-title">Confirm new positions</div><div class="switch-sub">Require a second tap before sending</div></div><div class="toggle on"></div></div>
+          <div class="switch-row"><div class="switch-copy"><div class="switch-title">Auto-collapse execution strip</div><div class="switch-sub">Return chart space after execution</div></div><div class="toggle on"></div></div>
+        </div></div>
+      </div>
+
+      <div id="more-risk" class="more-panel">
+        <div class="card"><div class="card-h"><span>Risk Limits</span><span class="gold">DUMMY</span></div><div class="card-b form-grid">
+          <div class="field"><label>MAX TRADE VALUE</label><input value="$2,500" /></div><div class="field"><label>DAILY LOSS LIMIT</label><input value="$1,500" /></div><div class="field"><label>MAX DELTA</label><input value="1.50" /></div><div class="field"><label>MAX CONCURRENT POSITIONS</label><input value="4" /></div>
+        </div></div>
+        <div class="section-gap"></div><div class="card"><div class="card-b"><div class="switch-row"><div class="switch-copy"><div class="switch-title">Hard block over limits</div><div class="switch-sub">Disable ENTER when a limit would be exceeded</div></div><div class="toggle on"></div></div><div class="switch-row"><div class="switch-copy"><div class="switch-title">Warn before EXIT ALL</div><div class="switch-sub">Confirmation for account-wide flatten</div></div><div class="toggle on"></div></div></div></div>
+      </div>
+
+      <div id="more-execution" class="more-panel">
+        <div class="card"><div class="card-h"><span>Execution Defaults</span><span>MOBILE</span></div><div class="card-b form-grid">
+          <div class="field"><label>ORDER TYPE</label><select><option>MKT</option><option>BID</option><option>MID</option><option>LIMIT</option></select></div>
+          <div class="field"><label>PRICE OFFSET</label><select><option>0.00</option><option>+0.05</option><option>-0.05</option></select></div>
+          <div class="field"><label>EXIT MODE</label><select><option>Market</option><option>Bid</option><option>Mid</option></select></div>
+          <div class="field"><label>SLIPPAGE GUARD</label><input value="0.15" /></div>
+        </div></div>
+        <div class="section-gap"></div><div class="card"><div class="card-b"><div class="switch-row"><div class="switch-copy"><div class="switch-title">One-tap EXIT</div><div class="switch-sub">Allow direct close from execution strip</div></div><div class="toggle"></div></div><div class="switch-row"><div class="switch-copy"><div class="switch-title">Prefer native combo orders</div><div class="switch-sub">Use multi-leg order when broker supports it</div></div><div class="toggle on"></div></div></div></div>
+      </div>
+
+      <div id="more-alerts" class="more-panel">
+        <div class="card"><div class="card-h"><span>Trading Alerts</span><span>PHONE</span></div><div class="card-b">
+          <div class="switch-row"><div class="switch-copy"><div class="switch-title">Fill alerts</div><div class="switch-sub">Immediate fill/reject feedback</div></div><div class="toggle on"></div></div>
+          <div class="switch-row"><div class="switch-copy"><div class="switch-title">Premium threshold</div><div class="switch-sub">Notify when selected premium crosses target</div></div><div class="toggle on"></div></div>
+          <div class="switch-row"><div class="switch-copy"><div class="switch-title">Session checkpoint</div><div class="switch-sub">Alert near noon and power hour</div></div><div class="toggle"></div></div>
+        </div></div>
+      </div>
+
+      <div id="more-display" class="more-panel">
+        <div class="card"><div class="card-h"><span>Display</span><span>PHONE</span></div><div class="card-b form-grid">
+          <div class="field"><label>DEFAULT CANDLE VIEW</label><select><option>50 candles</option><option>24 candles</option></select></div>
+          <div class="field"><label>NUMBER FORMAT</label><select><option>Compact</option><option>Full precision</option></select></div>
+        </div></div>
+        <div class="section-gap"></div><div class="card"><div class="card-b"><div class="switch-row"><div class="switch-copy"><div class="switch-title">Crosshair</div><div class="switch-sub">Show horizontal + vertical cursor guides</div></div><div class="toggle on"></div></div><div class="switch-row"><div class="switch-copy"><div class="switch-title">ITM backgrounds</div><div class="switch-sub">Tint CALL and PUT ITM chain columns</div></div><div class="toggle on"></div></div></div></div>
+      </div>
+
+      <div id="more-broker" class="more-panel">
+        <div class="card"><div class="card-h"><span>Broker</span><span class="good">CONNECTED</span></div><div class="card-b"><table class="summary-table"><tr><td>Provider</td><td>Schwab</td></tr><tr><td>Quotes</td><td class="good">Realtime</td></tr><tr><td>Account</td><td>••3821</td></tr><tr><td>Mode</td><td class="gold">Read only demo</td></tr><tr><td>Heartbeat</td><td>112 ms</td></tr></table><div class="section-gap"></div><div class="inline-actions"><button class="btn">RECONNECT</button><button class="btn">TEST</button><button class="btn danger">DISCONNECT</button></div></div></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="mobile-tabs">
+    <button class="mobile-tab active" data-tab="overview">OVERVIEW</button><button class="mobile-tab" data-tab="positions">POSITIONS</button><button class="mobile-tab" data-tab="orders">ORDERS</button><button class="mobile-tab" data-tab="settings">SETTINGS</button><button class="mobile-tab" data-tab="more">MORE</button>
+  </nav>
+</div>
+<script>
+'use strict';
+const sections=[...document.querySelectorAll('.section')];
+const tabs=[...document.querySelectorAll('.mobile-tab')];
+function showTab(id){sections.forEach(s=>s.classList.toggle('active',s.id===id));tabs.forEach(b=>b.classList.toggle('active',b.dataset.tab===id));history.replaceState(null,'','#'+id);}
+tabs.forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+[...document.querySelectorAll('.toggle')].forEach(t=>t.addEventListener('click',()=>t.classList.toggle('on')));
+const moreTabs=[...document.querySelectorAll('.more-tab')],morePanels=[...document.querySelectorAll('.more-panel')];
+function showMore(id){moreTabs.forEach(b=>b.classList.toggle('active',b.dataset.more===id));morePanels.forEach(p=>p.classList.toggle('active',p.id==='more-'+id));}
+moreTabs.forEach(b=>b.addEventListener('click',()=>showMore(b.dataset.more)));
+const marketData={
+ SPX:{price:'7706.48',move:'-0.28%',moveClass:'bad',product:'SPXW 0DTE',activity:'SPXW',step:'5.00',tick:'0.05',session:'09:30–16:00'},
+ SPY:{price:'770.62',move:'-0.24%',moveClass:'bad',product:'SPY 0DTE',activity:'SPY',step:'1.00',tick:'0.01',session:'09:30–16:00'},
+ QQQ:{price:'612.38',move:'+0.17%',moveClass:'good',product:'QQQ 0DTE',activity:'QQQ',step:'1.00',tick:'0.01',session:'09:30–16:00'},
+ '/ES':{price:'7721.25',move:'-0.12%',moveClass:'bad',product:'/ES FUTURES',activity:'/ES',step:'0.25',tick:'0.25',session:'18:00–17:00'}
+};
+let selectedSymbol=localStorage.getItem('zteAccountSymbol')||'SPX';if(!marketData[selectedSymbol])selectedSymbol='SPX';
+function renderSymbol(){const d=marketData[selectedSymbol];document.getElementById('headerSymbol').textContent=selectedSymbol;document.getElementById('headerPrice').textContent=d.price;const mv=document.getElementById('headerMove');mv.textContent=d.move;mv.className=d.moveClass;document.getElementById('overviewSymbol').textContent=selectedSymbol;document.getElementById('marketSelected').textContent=selectedSymbol;document.getElementById('productLabel').textContent=d.product;document.getElementById('strikeStep').textContent=d.step;document.getElementById('tickSize').textContent=d.tick;document.getElementById('sessionLabel').textContent=d.session;document.querySelectorAll('.activitySymbol').forEach(x=>x.textContent=d.activity);document.querySelectorAll('.symbol-choice').forEach(b=>b.classList.toggle('active',b.dataset.symbol===selectedSymbol));renderTables(d.activity);}
+function renderTables(sym){document.getElementById('positionRows').innerHTML=`<tr><td class="symbol">${sym} CALL</td><td>LONG</td><td>1</td><td>$3.80</td><td>$4.15</td><td>$415</td><td class="good">+$35</td><td>+0.42</td></tr><tr><td class="symbol">${sym} PUT</td><td>LONG</td><td>1</td><td>$3.10</td><td>$2.74</td><td>$274</td><td class="bad">-$36</td><td>-0.36</td></tr><tr><td class="symbol">${sym} HEDGE</td><td>SHORT</td><td>-2</td><td>$1.02</td><td>$0.74</td><td>-$148</td><td class="good">+$56</td><td>-0.12</td></tr>`;document.getElementById('orderRows').innerHTML=`<tr><td>15:51</td><td class="symbol">${sym} CALL</td><td>SELL</td><td>1</td><td>LIMIT</td><td>$2.40</td><td class="gold">WORKING</td></tr><tr><td>15:42</td><td class="symbol">${sym} CALL</td><td>SELL</td><td>1</td><td>LIMIT</td><td>$4.20</td><td class="good">FILLED</td></tr><tr><td>14:18</td><td class="symbol">${sym} PUT</td><td>BUY</td><td>1</td><td>MARKET</td><td>$3.10</td><td class="good">FILLED</td></tr>`;}
+document.querySelectorAll('.symbol-choice').forEach(b=>b.addEventListener('click',()=>{selectedSymbol=b.dataset.symbol;localStorage.setItem('zteAccountSymbol',selectedSymbol);renderSymbol();}));
+const initial=location.hash.slice(1);if(sections.some(s=>s.id===initial))showTab(initial);renderSymbol();
+</script>
+</body>
+</html>

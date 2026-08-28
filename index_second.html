@@ -886,103 +886,126 @@
                 );
             }
 
-            /* Same exact trace, revealed through a small moving mask. */
+            /* Same exact trace, but revealed as a gentle left-to-right scan band
+               so the energy travels across the board instead of looking like a dot. */
             .circuit-electric {
                 opacity: 0;
-                filter: brightness(2.75) saturate(1.16);
+                filter: brightness(2.58) saturate(1.13);
                 mix-blend-mode: screen;
-                -webkit-mask-image: radial-gradient(
-                    ellipse at center,
-                    #000 0%,
-                    #000 14%,
-                    rgba(0, 0, 0, 0.76) 30%,
-                    transparent 70%
+                -webkit-mask-image: linear-gradient(
+                    100deg,
+                    transparent 0%,
+                    rgba(0, 0, 0, 0.08) 12%,
+                    rgba(0, 0, 0, 0.45) 28%,
+                    #000 48%,
+                    rgba(0, 0, 0, 0.52) 68%,
+                    rgba(0, 0, 0, 0.10) 84%,
+                    transparent 100%
                 );
-                mask-image: radial-gradient(
-                    ellipse at center,
-                    #000 0%,
-                    #000 14%,
-                    rgba(0, 0, 0, 0.76) 30%,
-                    transparent 70%
+                mask-image: linear-gradient(
+                    100deg,
+                    transparent 0%,
+                    rgba(0, 0, 0, 0.08) 12%,
+                    rgba(0, 0, 0, 0.45) 28%,
+                    #000 48%,
+                    rgba(0, 0, 0, 0.52) 68%,
+                    rgba(0, 0, 0, 0.10) 84%,
+                    transparent 100%
                 );
-                -webkit-mask-size: clamp(136px, 9vw, 205px) clamp(50px, 4vw, 86px);
-                mask-size: clamp(136px, 9vw, 205px) clamp(50px, 4vw, 86px);
+                -webkit-mask-size: clamp(240px, 18vw, 390px) 140%;
+                mask-size: clamp(240px, 18vw, 390px) 140%;
                 -webkit-mask-repeat: no-repeat;
                 mask-repeat: no-repeat;
                 will-change: opacity, -webkit-mask-position, mask-position;
             }
 
             .circuit-electric-a {
-                animation: circuit-current-a 18s linear infinite;
+                animation: circuit-current-a 19s linear infinite;
             }
 
             .circuit-electric-b {
+                filter: brightness(2.38) saturate(1.08);
+                -webkit-mask-size: clamp(210px, 16vw, 340px) 135%;
+                mask-size: clamp(210px, 16vw, 340px) 135%;
                 animation: circuit-current-b 24s linear infinite;
-                animation-delay: -10s;
+                animation-delay: -11s;
             }
 
             @keyframes circuit-current-a {
-                0%, 42% {
+                0%, 36% {
                     opacity: 0;
-                    -webkit-mask-position: 47% 62%;
-                    mask-position: 47% 62%;
+                    -webkit-mask-position: -28% 48%;
+                    mask-position: -28% 48%;
                 }
-                47% { opacity: 0.06; }
-                53% {
-                    opacity: 0.16;
-                    -webkit-mask-position: 57% 52%;
-                    mask-position: 57% 52%;
+                40% {
+                    opacity: 0.05;
                 }
-                60% {
-                    opacity: 0.25;
-                    -webkit-mask-position: 69% 39%;
-                    mask-position: 69% 39%;
+                49% {
+                    opacity: 0.12;
+                    -webkit-mask-position: 6% 46%;
+                    mask-position: 6% 46%;
+                }
+                58% {
+                    opacity: 0.18;
+                    -webkit-mask-position: 34% 44%;
+                    mask-position: 34% 44%;
                 }
                 67% {
-                    opacity: 0.34;
-                    -webkit-mask-position: 80% 28%;
-                    mask-position: 80% 28%;
+                    opacity: 0.22;
+                    -webkit-mask-position: 62% 42%;
+                    mask-position: 62% 42%;
                 }
-                74% {
-                    opacity: 0.13;
-                    -webkit-mask-position: 90% 18%;
-                    mask-position: 90% 18%;
+                76% {
+                    opacity: 0.16;
+                    -webkit-mask-position: 88% 40%;
+                    mask-position: 88% 40%;
                 }
-                80%, 100% {
+                84% {
+                    opacity: 0.06;
+                    -webkit-mask-position: 108% 39%;
+                    mask-position: 108% 39%;
+                }
+                100% {
                     opacity: 0;
-                    -webkit-mask-position: 95% 13%;
-                    mask-position: 95% 13%;
+                    -webkit-mask-position: 116% 39%;
+                    mask-position: 116% 39%;
                 }
             }
 
             @keyframes circuit-current-b {
-                0%, 56% {
+                0%, 52% {
                     opacity: 0;
-                    -webkit-mask-position: 59% 67%;
-                    mask-position: 59% 67%;
+                    -webkit-mask-position: -24% 66%;
+                    mask-position: -24% 66%;
                 }
-                61% { opacity: 0.05; }
-                67% {
-                    opacity: 0.13;
-                    -webkit-mask-position: 68% 56%;
-                    mask-position: 68% 56%;
+                57% {
+                    opacity: 0.04;
+                }
+                65% {
+                    opacity: 0.10;
+                    -webkit-mask-position: 10% 63%;
+                    mask-position: 10% 63%;
                 }
                 73% {
-                    opacity: 0.19;
-                    -webkit-mask-position: 78% 44%;
-                    mask-position: 78% 44%;
+                    opacity: 0.15;
+                    -webkit-mask-position: 40% 61%;
+                    mask-position: 40% 61%;
                 }
-                79% {
-                    opacity: 0.21;
-                    -webkit-mask-position: 88% 32%;
-                    mask-position: 88% 32%;
+                81% {
+                    opacity: 0.18;
+                    -webkit-mask-position: 72% 58%;
+                    mask-position: 72% 58%;
                 }
-                85% {
-                    opacity: 0.08;
-                    -webkit-mask-position: 96% 23%;
-                    mask-position: 96% 23%;
+                88% {
+                    opacity: 0.10;
+                    -webkit-mask-position: 100% 56%;
+                    mask-position: 100% 56%;
                 }
-                90%, 100% { opacity: 0; }
+                100% {
+                    opacity: 0;
+                    -webkit-mask-position: 116% 55%;
+                    mask-position: 116% 55%;
+                }
             }
 
             /* Keep the first-visit typewriter smooth. Expensive animated masks wait
