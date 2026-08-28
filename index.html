@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- ZeroToExpire WebGL2 prototype: DOM for content/accessibility, raw WebGL2 for retained visual surfaces. -->
+<!-- ZeroToExpire website: DOM/CSS owns all foreground components; WebGL2 is ambient background only. -->
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -91,8 +91,8 @@
                 overflow-x: hidden;
             }
 
-            /* WebGL2 owns the persistent visual surface. The DOM above it
-               still owns text, links, accessibility, and document flow. */
+            /* WebGL2 is ambient background only. All foreground layout, media,
+               cards, controls, and interactive components remain normal DOM/CSS. */
             #gl-surface {
                 position: fixed;
                 inset: 0;
@@ -537,13 +537,29 @@
                 outline: none;
             }
 
-            .media-frame {
+            /* Reusable foreground surface. New components can opt in with
+               class="component-surface" without touching the WebGL renderer. */
+            .component-surface,
+            .media-frame,
+            .research-card {
                 position: relative;
                 overflow: hidden;
-                border: 1px solid transparent;
+                border: 1px solid rgba(232, 218, 187, 0.12);
                 border-radius: var(--radius);
-                background: transparent;
-                box-shadow: none;
+                background:
+                    linear-gradient(
+                        145deg,
+                        rgba(242, 214, 148, 0.032),
+                        transparent 38%
+                    ),
+                    rgba(12, 11, 8, 0.90);
+                box-shadow:
+                    inset 0 0 0 1px rgba(255, 255, 255, 0.015),
+                    0 24px 70px rgba(0, 0, 0, 0.30);
+            }
+
+            .media-frame {
+                width: 100%;
             }
 
             .media-frame::before {
@@ -641,16 +657,18 @@
             }
 
             .research-card {
-                border: 1px solid transparent;
-                border-radius: var(--radius);
-                background: transparent;
-                overflow: hidden;
-                transition: 180ms ease;
+                transition:
+                    transform 180ms ease,
+                    border-color 180ms ease,
+                    box-shadow 180ms ease;
             }
 
             .research-card:hover {
-                border-color: transparent;
+                border-color: rgba(242, 214, 148, 0.22);
                 transform: translateY(-2px);
+                box-shadow:
+                    inset 0 0 0 1px rgba(255, 255, 255, 0.018),
+                    0 28px 78px rgba(0, 0, 0, 0.36);
             }
 
             .image-shell {
@@ -1419,13 +1437,6 @@
                     uniform vec2 uResolution;
                     uniform float uTime;
                     uniform float uDpr;
-                    uniform int uRectCount;
-                    uniform vec4 uRects[8];
-
-                    float roundedBoxSdf(vec2 p, vec2 halfSize, float radius) {
-                        vec2 q = abs(p) - halfSize + radius;
-                        return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - radius;
-                    }
 
                     float trace(float y, float target, float widthPx) {
                         float d = abs(y - target) * uResolution.y;
@@ -1466,28 +1477,6 @@
                         color += vec3(0.91, 0.855, 0.73) * t1 * 0.000;
                         color += vec3(0.88, 0.73, 0.41) * (t2 + t3) * 0.000;
 
-                        // WebGL-backed panel surfaces. DOM only supplies their rectangles.
-                        for (int i = 0; i < 8; ++i) {
-                            if (i >= uRectCount) break;
-
-                            vec4 r = uRects[i];
-                            vec2 center = r.xy + r.zw * 0.5;
-                            vec2 halfSize = r.zw * 0.5;
-                            float sdf = roundedBoxSdf(domPx - center, halfSize, 12.0 * uDpr);
-
-                            float inside = 1.0 - smoothstep(-1.0 * uDpr, 0.0, sdf);
-                            float border = 1.0 - smoothstep(0.75 * uDpr, 1.75 * uDpr, abs(sdf));
-
-                            vec3 panel = vec3(0.0275, 0.0240, 0.0170);
-                            color = mix(color, panel, inside * 0.88);
-                            color += vec3(0.29, 0.25, 0.18) * border * 0.36;
-
-                            // Small top-left warm reflection similar to the original card gradient.
-                            vec2 local = (domPx - r.xy) / max(r.zw, vec2(1.0));
-                            float reflection = exp(-dot(local - vec2(0.02, 0.02), local - vec2(0.02, 0.02)) * 8.0);
-                            color += vec3(0.08, 0.065, 0.035) * reflection * inside * 0.18;
-                        }
-
                         // Very faint scan texture to make the GPU layer visible during experimentation.
                         float scan = 0.5 + 0.5 * sin(domPx.y * 0.48 / max(uDpr, 1.0));
                         color += vec3(0.012) * scan * 0.08;
@@ -1522,19 +1511,10 @@
                     resolution: gl.getUniformLocation(program, "uResolution"),
                     time: gl.getUniformLocation(program, "uTime"),
                     dpr: gl.getUniformLocation(program, "uDpr"),
-                    rectCount: gl.getUniformLocation(program, "uRectCount"),
-                    rects: gl.getUniformLocation(program, "uRects[0]"),
                 };
 
-                // Retained CPU-side state. No geometry is rebuilt per frame.
-                const rectData = new Float32Array(8 * 4);
-                let rectCount = 0;
-                let layoutDirty = true;
+                // Background-only renderer: it has no knowledge of DOM components.
                 let currentDpr = 1;
-
-                const panelElements = () => [
-                    ...document.querySelectorAll(".media-frame, .research-card"),
-                ].slice(0, 8);
 
                 const syncCanvasSize = () => {
                     currentDpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -1547,52 +1527,17 @@
                     }
                 };
 
-                const syncPanelRects = () => {
-                    rectData.fill(0);
-                    const nodes = panelElements();
-                    rectCount = 0;
-
-                    for (const node of nodes) {
-                        const r = node.getBoundingClientRect();
-                        if (r.bottom < -40 || r.top > window.innerHeight + 40) continue;
-
-                        const i = rectCount * 4;
-                        rectData[i + 0] = r.left * currentDpr;
-                        rectData[i + 1] = r.top * currentDpr;
-                        rectData[i + 2] = r.width * currentDpr;
-                        rectData[i + 3] = r.height * currentDpr;
-                        rectCount += 1;
-                        if (rectCount === 8) break;
-                    }
-
-                    layoutDirty = false;
-                };
-
-                const markLayoutDirty = () => {
-                    layoutDirty = true;
-                };
-
-                window.addEventListener("resize", markLayoutDirty, { passive: true });
-                window.addEventListener("scroll", markLayoutDirty, { passive: true });
-
-                if ("ResizeObserver" in window) {
-                    const resizeObserver = new ResizeObserver(markLayoutDirty);
-                    resizeObserver.observe(document.body);
-                }
-
                 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
                 const started = performance.now();
 
-                const render = (now) => {
-                    syncCanvasSize();
-                    if (layoutDirty) syncPanelRects();
+                syncCanvasSize();
+                window.addEventListener("resize", syncCanvasSize, { passive: true });
 
+                const render = (now) => {
                     gl.useProgram(program);
                     gl.uniform2f(uniforms.resolution, canvas.width, canvas.height);
                     gl.uniform1f(uniforms.time, reducedMotion ? 0 : (now - started) * 0.001);
                     gl.uniform1f(uniforms.dpr, currentDpr);
-                    gl.uniform1i(uniforms.rectCount, rectCount);
-                    gl.uniform4fv(uniforms.rects, rectData);
                     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
                     requestAnimationFrame(render);
