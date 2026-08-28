@@ -11,7 +11,7 @@
 (()=>{'use strict';
 const canvas=document.getElementById('gex'),ctx=canvas.getContext('2d',{alpha:false});
 const C={
- bg:'#070707',panel:'#0c0b0a',header:'#0d0a08',border:'#373431',grid:'rgba(28,27,25,.95)',mid:'rgba(132,127,119,.72)',soft:'#b8b2a7',
+ bg:'#050504',panel:'#0b0a07',header:'#100e0b',border:'#433a2c',grid:'rgba(55,49,40,.52)',mid:'rgba(90,82,68,.72)',soft:'#beb196',
  gamma:'#d9c968',call:'#49704b',put:'#974130',callLive:'#6f9569',putLive:'#b14f3c',
  strikeOpen:'#48bcff',strikeHigh:'#ee9452',strikeLow:'#6e94ff',strikeClose:'#e0b64c',strikeNormal:'#acb4be',
  labelBg:'rgba(7,6,5,.76)',oscBg:'rgba(11,10,7,.96)',oscText:'#c5bbab'
@@ -78,7 +78,7 @@ function strikeSuffix(mask){return mask&STRIKE_C?' C':'';}
 function updateRows(tick){
  const atm=Math.round(state.spot/5)*5,rows=geom.rows;
  for(let i=0;i<rows;i++){
-   const y=geom.top+i*geom.rowStep,strike=atm+(geom.mid-i)*5,v=gexValueForStrike(strike,tick),barH=Math.max(1,Math.min(geom.bottom-y,geom.rowStep));
+   const y=geom.top+i*geom.rowStep,strike=atm+(i-geom.mid)*5,v=gexValueForStrike(strike,tick),barH=Math.max(1,Math.min(geom.bottom-y,geom.rowStep));
    ys[i]=y;strikes[i]=strike;vals[i]=v;barHs[i]=barH;tipXs[i]=geom.cx+v*geom.maxW;masks[i]=strikeMask(strike);
  }
  for(let i=0;i<rows;i++){
