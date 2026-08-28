@@ -900,21 +900,6 @@
                 background: #050504;
             }
 
-            .phone-account-loading {
-                position: absolute;
-                inset: 0;
-                display: grid;
-                place-items: center;
-                z-index: 0;
-                color: rgba(232, 218, 187, 0.72);
-                background: #050504;
-                font: 700 12px/1.2 "JetBrains Mono", "Cascadia Code", Consolas, monospace;
-                letter-spacing: 0.08em;
-                pointer-events: none;
-            }
-
-            .phone-account-frame { position: relative; z-index: 1; }
-
             .phone-account-back {
                 position: absolute;
                 top: 8px;
@@ -1367,12 +1352,11 @@
                             <canvas id="zte-phone-gl" aria-label="Interactive ZeroToExpire WebGL phone surface"></canvas>
                             <div class="phone-fallback" id="zte-phone-fallback">WebGL2 is unavailable in this browser or GPU configuration.</div>
                             <div class="phone-account-embed" id="zte-phone-account" aria-hidden="true">
-                                <div class="phone-account-loading" id="zte-phone-account-loading">ACCOUNT · LOADING</div>
                                 <iframe
                                     class="phone-account-frame"
                                     id="zte-phone-account-frame"
                                     title="ZeroToExpire account panel"
-                                    data-src="./account_html/zte_account_panel_responsive.html"
+                                    data-src="file:///C:/Users/Fran%20G/Desktop/python/zerotoexpire_platform/account_html/zte_account_panel_responsive.html"
                                 ></iframe>
                                 <button class="phone-account-back" id="zte-phone-account-back" type="button" aria-label="Return to market surface">&#8249;</button>
                             </div>
@@ -1770,12 +1754,9 @@ const canvas=document.getElementById('zte-phone-gl');
 const phoneAccount=document.getElementById('zte-phone-account');
 const phoneAccountFrame=document.getElementById('zte-phone-account-frame');
 const phoneAccountBack=document.getElementById('zte-phone-account-back');
-const phoneAccountLoading=document.getElementById('zte-phone-account-loading');
-phoneAccountFrame?.addEventListener('load',()=>{if(phoneAccountLoading)phoneAccountLoading.style.display='none';});
 function openPhoneAccount(){
  if(!phoneAccount||!phoneAccountFrame)return;
- if(phoneAccountLoading)phoneAccountLoading.style.display='grid';
- if(!phoneAccountFrame.getAttribute('src')){phoneAccountFrame.setAttribute('src',phoneAccountFrame.dataset.src);}
+ if(!phoneAccountFrame.src){phoneAccountFrame.src=phoneAccountFrame.dataset.src;}
  phoneAccount.classList.add('is-open');
  phoneAccount.setAttribute('aria-hidden','false');
 }
