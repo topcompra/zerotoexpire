@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ZeroToExpire Smartphone GEX</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050504}canvas{display:block;width:100%;height:100%;background:#050504}</style>
+</head>
+<body><canvas id="gex"></canvas>
+<script>
+(()=>{'use strict';
+const canvas=document.getElementById('gex'),ctx=canvas.getContext('2d',{alpha:false});
+const C={
+ bg:'#050504',border:'#433a2c',grid:'rgba(55,49,40,.52)',soft:'#beb196',gold:'#cfa453',call:'#49704b',put:'#974130',
+ gamma:'#d9c968',strikeOpen:'#48bcff',strikeHigh:'#ee9452',strikeLow:'#6e94ff',strikeClose:'#e0b64c',strikeNormal:'#acb4be'
+};
+const STRIKE_O=1,STRIKE_H=2,STRIKE_L=4,STRIKE_C=8,MAX_ROWS=16,GEX_FRAME_MS=1000/30;
+let W=1,H=1,dpr=1,lastDrawAt=-Infinity,dirty=true;
+const state={spot:6512.4,tick:13572,playing:true,rate:5,sessionTicks:23400,dayO:6512.4,dayH:6512.4,dayL:6512.4,dayC:6512.4,receivedAt:performance.now()};
+const geom={top:29,bottom:40,labelW:24,gap:3,plotX:4,plotW:40,labelX:47,cx:24,maxW:18,height:24,rows:12,rowStep:2,mid:6};
+const ys=new Float32Array(MAX_ROWS),strikes=new Float32Array(MAX_ROWS),vals=new Float32Array(MAX_ROWS),barHs=new Float32Array(MAX_ROWS),tipXs=new Float32Array(MAX_ROWS),smoothTipXs=new Float32Array(MAX_ROWS),convex=new Float32Array(MAX_ROWS),masks=new Uint8Array(MAX_ROWS);
+const staticCanvas=document.createElement('canvas'),staticCtx=staticCanvas.getContext('2d',{alpha:false});
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function recomputeGeometry(){
+ geom.top=29;geom.bottom=Math.max(geom.top+8,H-8);geom.labelW=clamp(Math.floor(W*.29),24,31);geom.gap=3;geom.plotX=4;geom.plotW=Math.max(24,W-geom.labelW-geom.gap-8);geom.labelX=geom.plotX+geom.plotW+geom.gap;geom.cx=geom.plotX+geom.plotW*.5;geom.maxW=Math.max(8,geom.plotW*.46);geom.height=Math.max(24,geom.bottom-geom.top);geom.rows=clamp(Math.floor(geom.height/7),12,MAX_ROWS);geom.rowStep=geom.height/geom.rows;geom.mid=Math.floor(geom.rows*.5);
+}
+function rebuildStatic(){
+ staticCanvas.width=canvas.width;staticCanvas.height=canvas.height;staticCtx.setTransform(dpr,0,0,dpr,0,0);staticCtx.fillStyle=C.bg;staticCtx.fillRect(0,0,W,H);staticCtx.strokeStyle=C.border;staticCtx.lineWidth=.75;staticCtx.strokeRect(.4,.4,W-.8,H-.8);staticCtx.font='600 10px Consolas,monospace';staticCtx.textBaseline='top';staticCtx.textAlign='center';staticCtx.fillStyle=C.soft;staticCtx.fillText('SPXW GEX',W*.5,5);staticCtx.strokeStyle=C.grid;staticCtx.lineWidth=.6;staticCtx.beginPath();staticCtx.moveTo(geom.cx,geom.top);staticCtx.lineTo(geom.cx,geom.bottom);staticCtx.stroke();staticCtx.globalAlpha=.55;staticCtx.beginPath();staticCtx.moveTo(geom.labelX-2,geom.top);staticCtx.lineTo(geom.labelX-2,geom.bottom);staticCtx.stroke();staticCtx.globalAlpha=1;
+}
+function resize(){
+ const r=canvas.getBoundingClientRect(),nw=Math.max(1,r.width),nh=Math.max(1,r.height),nd=Math.min(devicePixelRatio||1,2);if(nw===W&&nh===H&&nd===dpr)return false;W=nw;H=nh;dpr=nd;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);recomputeGeometry();rebuildStatic();dirty=true;return true;
+}
+new ResizeObserver(resize).observe(canvas);resize();
+function gexValueForStrike(strike,tick){
+ const k=strike/5,structural=Math.sin(k*.731+1.17)*.58+Math.sin(k*.193-2.41)*.29,localWave=Math.sin(k*.047+tick/1850)*.18,slowPulse=Math.sin(tick/4200+k*.011)*.11,hash=Math.abs(Math.sin(k*12.9898)*43758.5453)%1,fastStrike=hash>.46,fastSpeed=250+hash*210,fastPhase=tick/fastSpeed+k*.31,breathe=fastStrike?(.84+Math.sin(fastPhase)*(.16+hash*.07)):1,flick=fastStrike?Math.sin(fastPhase*.63+k*.17)*(.035+hash*.025):0;
+ const raw=(structural+localWave+slowPulse)*breathe+flick;
+ const dayRange=Math.max(1,Math.abs(state.dayH-state.dayL)),dayBias=clamp((state.dayC-state.dayO)/dayRange,-1,1);
+ let v=raw;
+ // Regime-aware profile: a clearly bearish day should read mostly bearish at a glance,
+ // with only sparse positive injections. Bullish days mirror the behavior.
+ if(dayBias<-.12){
+   const mag=.24+Math.abs(raw)*.76;
+   v=-mag;
+   if(hash>.82){
+     const pulse=Math.sin(tick/(150+hash*85)+k*.27);
+     if(pulse>.34)v=mag*clamp((pulse-.34)/.66,0,1);       // brief green sprout
+     else if(pulse>-.08)v=-mag*clamp((-pulse+.08)/.42,0,1); // collapse toward zero
+   }
+ }else if(dayBias>.12){
+   const mag=.24+Math.abs(raw)*.76;
+   v=mag;
+   if(hash>.82){
+     const pulse=Math.sin(tick/(150+hash*85)+k*.27);
+     if(pulse<-.34)v=-mag*clamp((-pulse-.34)/.66,0,1);      // brief red sprout
+     else if(pulse<.08)v=mag*clamp((pulse+.08)/.42,0,1);   // collapse toward zero
+   }
+ }else if(hash>.78){
+   // Neutral/mixed sessions keep the original full polarity-crossing injection behavior.
+   const injection=Math.sin(tick/(165+hash*95)+k*.23);v*=injection;
+ }
+ return clamp(v,-1,1);
+}
+function projectedTick(now){if(!state.playing)return state.tick;const dt=(now-state.receivedAt)/1000;return (state.tick+dt*state.rate*60)%state.sessionTicks;}
+function strikeMask(strike){let m=0;if(strike===Math.round(state.dayO/5)*5)m|=STRIKE_O;if(strike===Math.round(state.dayH/5)*5)m|=STRIKE_H;if(strike===Math.round(state.dayL/5)*5)m|=STRIKE_L;if(strike===Math.round(state.dayC/5)*5)m|=STRIKE_C;return m;}
+function strikeColor(mask){if(mask&STRIKE_C)return C.strikeClose;if(mask&STRIKE_O)return C.strikeOpen;if(mask&STRIKE_H)return C.strikeHigh;if(mask&STRIKE_L)return C.strikeLow;return C.strikeNormal;}
+function strikePrefix(mask){let s='';if(mask&STRIKE_O)s+='O';if(mask&STRIKE_H)s+='H';if(mask&STRIKE_L)s+='L';return s?s+' ':'';}
+function strikeSuffix(mask){return mask&STRIKE_C?' C':'';}
+function updateRows(tick){
+ const atm=Math.round(state.spot/5)*5,rows=geom.rows;
+ for(let i=0;i<rows;i++){
+   const y=geom.top+i*geom.rowStep,strike=atm+(geom.mid-i)*5,v=gexValueForStrike(strike,tick),barH=Math.max(3,Math.min(geom.bottom-y,geom.rowStep-.25));ys[i]=y;strikes[i]=strike;vals[i]=v;barHs[i]=barH;tipXs[i]=geom.cx+v*geom.maxW;masks[i]=strikeMask(strike);
+ }
+ for(let i=0;i<rows;i++){
+   let sum=0,weight=0;
+   for(let j=-2;j<=2;j++){const k=clamp(i+j,0,rows-1),w=j===0?4:Math.abs(j)===1?2:1;sum+=tipXs[k]*w;weight+=w;}
+   smoothTipXs[i]=sum/weight;
+ }
+ let convexMax=0;
+ for(let i=0;i<rows;i++){const p=smoothTipXs[i>0?i-1:0],c=smoothTipXs[i],n=smoothTipXs[i<rows-1?i+1:rows-1],cv=n-2*c+p;convex[i]=cv;convexMax=Math.max(convexMax,Math.abs(cv));}
+ return convexMax;
+}
+function draw(now){
+ // Static frame/title/grid is cached; only bars/curve/labels are dynamic.
+ ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(staticCanvas,0,0);ctx.setTransform(dpr,0,0,dpr,0,0);
+ const tick=projectedTick(now),convexMax=updateRows(tick),rows=geom.rows;
+ ctx.font='600 10px Consolas,monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+ // Guides + bars first.
+ for(let i=0;i<rows;i++){
+   const y=ys[i],v=vals[i],barH=barHs[i],mask=masks[i],w=Math.abs(v)*geom.maxW;if(mask&STRIKE_C){ctx.fillStyle='rgba(224,182,76,.13)';ctx.fillRect(geom.plotX,y+barH*.5,geom.labelX+geom.labelW-geom.plotX,.55);}ctx.fillStyle=v>=0?C.call:C.put;ctx.fillRect(v>=0?geom.cx:geom.cx-w,y,w,barH);
+ }
+ // Convexity curve is intentionally ABOVE the GEX bars. It remains anchored to the
+ // smoothed bar-tip profile, while local second-derivative magnitude controls tension.
+ ctx.strokeStyle=C.gamma;ctx.globalAlpha=.88;ctx.lineWidth=1.25;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();
+ if(rows){ctx.moveTo(smoothTipXs[0],ys[0]+barHs[0]*.5);for(let i=0;i<rows-1;i++){const i0=i>0?i-1:0,i2=i+1,i3=i+2<rows?i+2:rows-1,x0=smoothTipXs[i0],y0=ys[i0]+barHs[i0]*.5,x1=smoothTipXs[i],y1=ys[i]+barHs[i]*.5,x2=smoothTipXs[i2],y2=ys[i2]+barHs[i2]*.5,x3=smoothTipXs[i3],y3=ys[i3]+barHs[i3]*.5,cMag=convexMax>0?Math.abs(convex[i])/convexMax:0,tension=.16+.16*cMag,cp1x=x1+(x2-x0)*tension,cp1y=y1+(y2-y0)*tension/3,cp2x=x2-(x3-x1)*tension,cp2y=y2-(y3-y1)*tension/3;ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,x2,y2);}}
+ ctx.stroke();ctx.globalAlpha=1;
+ // Labels are top-most; O/H/L/C use the same desktop chain marker colors.
+ for(let i=0;i<rows;i++){const mask=masks[i],label=strikePrefix(mask)+String(strikes[i])+strikeSuffix(mask);ctx.fillStyle=strikeColor(mask);ctx.fillText(label,geom.labelX+geom.labelW*.5,ys[i]+barHs[i]*.5);if(strikes[i]===Math.round(state.spot/5)*5){ctx.fillStyle='rgba(242,214,148,.9)';ctx.beginPath();ctx.arc(smoothTipXs[i],ys[i]+barHs[i]*.5,1.65,0,Math.PI*2);ctx.fill();}}
+}
+function frame(now){
+ const resized=resize();
+ if(!dirty&&!state.playing&&!resized){requestAnimationFrame(frame);return;}
+ if(!dirty&&now-lastDrawAt<GEX_FRAME_MS){requestAnimationFrame(frame);return;}
+ draw(now);lastDrawAt=now;dirty=false;requestAnimationFrame(frame);
+}
+addEventListener('message',e=>{const d=e.data;if(!d||d.type!=='zte-gex-state')return;if(Number.isFinite(d.spot))state.spot=d.spot;if(Number.isFinite(d.tick))state.tick=d.tick;if(typeof d.playing==='boolean')state.playing=d.playing;if(Number.isFinite(d.rate))state.rate=d.rate;if(Number.isFinite(d.sessionTicks))state.sessionTicks=d.sessionTicks;if(Number.isFinite(d.dayO))state.dayO=d.dayO;if(Number.isFinite(d.dayH))state.dayH=d.dayH;if(Number.isFinite(d.dayL))state.dayL=d.dayL;if(Number.isFinite(d.dayC))state.dayC=d.dayC;state.receivedAt=performance.now();dirty=true;});
+parent.postMessage({type:'zte-gex-ready'},'*');requestAnimationFrame(frame);
+})();
+</script></body></html>
